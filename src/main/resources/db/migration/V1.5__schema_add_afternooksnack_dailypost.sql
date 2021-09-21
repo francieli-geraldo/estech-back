@@ -1,0 +1,1 @@
+ALTER TABLE `dailyposting` ADD COLUMN afternoon_snack tinyint NOT NULL DEFAULT 0 COMMENT 'Indicates if the afternoon snack was informed' AFTER `lunch`;

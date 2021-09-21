@@ -1,0 +1,42 @@
+spring:
+  main:
+    banner-mode: off
+  application:
+    name: afine-se
+  profiles:
+    active: ${ENV_PROFILE:local}
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+    mapper:
+      accept-case-insensitive-enums: false
+
+server:
+  port: ${SERVICE_PORT}
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: info, health, metrics
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: basic
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+    com:
+      jcraft:
+        jsch: warn

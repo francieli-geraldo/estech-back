@@ -1,0 +1,21 @@
+package br.com.scsoftware.afinese.domains.basicrecords.service;
+
+import br.com.scsoftware.afinese.domains.basicrecords.business.CreateAgreementBO;
+import br.com.scsoftware.afinese.domains.basicrecords.business.UpdateAgreementBO;
+import br.com.scsoftware.afinese.domains.basicrecords.entity.Agreement;
+import br.com.scsoftware.afinese.domains.basicrecords.enums.StatusAgreement;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.Optional;
+
+public interface AgreementService {
+
+    Page<Agreement> getAllRecords(Long patientId, Long programId, StatusAgreement status, Pageable pageRequest);
+
+    Optional<Agreement> getRecord(Long id);
+
+    CreateAgreementBO create(CreateAgreementBO agreement);
+
+    UpdateAgreementBO update(UpdateAgreementBO agreement, Long id);
+}
