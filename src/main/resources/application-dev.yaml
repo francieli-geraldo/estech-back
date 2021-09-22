@@ -28,4 +28,6 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: TRACE
+    org:
+      hibernate:
+        SQL: debug

@@ -34,9 +34,6 @@ feign:
 
 logging:
   level:
-    org:
-      hibernate:
-        SQL: debug
     com:
       jcraft:
         jsch: warn
