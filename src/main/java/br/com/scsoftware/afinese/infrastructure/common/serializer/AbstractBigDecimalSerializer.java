@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
@@ -18,11 +19,9 @@ public abstract class AbstractBigDecimalSerializer extends JsonSerializer<BigDec
         if (null == value) {
             gen.writeNull();
         } else {
-            final String pattern = getPattern();
-            final DecimalFormat myFormatter = new DecimalFormat(pattern);
-            gen.writeNumber(myFormatter.format(value));
+            gen.writeNumber(value.setScale(getPattern(), RoundingMode.HALF_EVEN));
         }
     }
 
-    protected abstract String getPattern();
+    protected abstract Integer getScale();
 }
