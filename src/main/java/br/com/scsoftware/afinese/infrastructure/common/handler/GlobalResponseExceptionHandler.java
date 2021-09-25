@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,12 +22,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GlobalResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ExceptionResponse> handleNotFoundException(final Exception ex, final WebRequest request) {
+    public final ResponseEntity<ExceptionResponse> handlerException(final Exception ex, final WebRequest request) {
         HttpStatus httpStatus = ex.getClass().getAnnotation(ResponseStatus.class).value();
-        if(httpStatus == null)
+        if (httpStatus == null)
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
         return new ResponseEntity<>(new ExceptionResponse(ex.getMessage()), httpStatus);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public final ResponseEntity<ExceptionResponse> handleAccessDeniedException(final Exception ex, final WebRequest request) {
+
+        return new ResponseEntity<>(new ExceptionResponse(ex.getMessage()), HttpStatus.FORBIDDEN);
     }
 
     @Override

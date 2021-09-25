@@ -1,12 +1,8 @@
 package br.com.scsoftware.afinese.infrastructure.config;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -15,14 +11,14 @@ import org.springframework.web.filter.CorsFilter;
  * @author samuel-cruz
  *
  */
-@Configuration
+// @Configuration
 //@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@Order(1)
+// @EnableGlobalMethodSecurity(prePostEnabled = true)
+// @Order(1)
 public class BaseWebMvcConfig {
 	private static final long MAX_AGE_SECS = 3600;
 
-	@Bean
+	// @Bean
 	public FilterRegistrationBean<CorsFilter> processCorsFilter() {
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		final CorsConfiguration config = new CorsConfiguration();

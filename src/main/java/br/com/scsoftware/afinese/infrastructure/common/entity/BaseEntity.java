@@ -1,12 +1,18 @@
 package br.com.scsoftware.afinese.infrastructure.common.entity;
 
+import br.com.scsoftware.afinese.domains.auth.service.impl.UserServiceImpl;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
 
 @Getter
@@ -32,5 +38,11 @@ public abstract class BaseEntity {
     private boolean active = true;
 
     @Column(name = "tenant_id")
-    private Long tenantId = 1L;
+    private Long tenantId;
+
+    @PrePersist
+    private void beforeSave() {
+        if (id == null)
+            tenantId = UserServiceImpl.getAuthenticatedUser().getTenantId();
+    }
 }
