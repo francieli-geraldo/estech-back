@@ -63,7 +63,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "    a.group_id = :groupId " +
             "and a.start_date <= :date " +
             "and (:patientId is null or a.patient_id = :patientId) " +
-            "and a.status = :status ", nativeQuery = true)
+            "and a.status = :status order by p.name ", nativeQuery = true)
     List<Map<String, Object>> findByGroupIdAndPatientIdAndDateAndAgreementStatus(Long groupId, Long patientId, LocalDate date, String status);
 
     @Query(value = "select " +
