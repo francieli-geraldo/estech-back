@@ -103,7 +103,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "        pg.id = a.program_id " +
             "    and pg.active = 1 " +
             "  ) inner join grouppatients g on ( " +
-            "    g.id = a.program_id " +
+            "    g.id = a.group_id " +
             "  ) " +
             "where " +
             "    (:groupId is null or g.id = :groupId) " +
@@ -149,7 +149,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "        pg.id = a.program_id " +
             "    and pg.active = 1 " +
             "  ) inner join grouppatients g on ( " +
-            "    g.id = a.program_id " +
+            "    g.id = a.group_id " +
             "  ) " +
             "where " +
             "    (:groupId is null or g.id = :groupId) " +
