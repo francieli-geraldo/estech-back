@@ -1,6 +1,7 @@
 package br.com.scsoftware.afinese.infrastructure.config.security;
 
 import br.com.scsoftware.afinese.infrastructure.common.exception.UnauthorizedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        throw new UnauthorizedException("Unauthorized");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 
 }

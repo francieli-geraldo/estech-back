@@ -1,11 +1,13 @@
 package br.com.scsoftware.afinese.infrastructure.common.handler;
 
+import br.com.scsoftware.afinese.infrastructure.common.exception.UnauthorizedException;
 import br.com.scsoftware.afinese.infrastructure.common.jsonapi.business.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +36,12 @@ public class GlobalResponseExceptionHandler extends ResponseEntityExceptionHandl
     public final ResponseEntity<ExceptionResponse> handleAccessDeniedException(final Exception ex, final WebRequest request) {
 
         return new ResponseEntity<>(new ExceptionResponse(ex.getMessage()), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler({UnauthorizedException.class, AuthenticationException.class})
+    public final ResponseEntity<ExceptionResponse> handleUnauthorizedException(final Exception ex, final WebRequest request) {
+
+        return new ResponseEntity<>(new ExceptionResponse(ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
     @Override

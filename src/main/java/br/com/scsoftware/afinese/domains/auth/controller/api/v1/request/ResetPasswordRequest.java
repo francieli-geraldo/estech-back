@@ -1,6 +1,7 @@
 package br.com.scsoftware.afinese.domains.auth.controller.api.v1.request;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,6 +17,7 @@ public class ResetPasswordRequest {
     @Positive
     private Long id;
     @NotBlank
+    @ToString.Exclude
     private String password;
 
 }
