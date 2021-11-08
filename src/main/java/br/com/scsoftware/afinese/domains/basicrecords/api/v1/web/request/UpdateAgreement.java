@@ -30,31 +30,29 @@ public class UpdateAgreement {
     private LocalDate hiringDate;
     @NotNull
     private LocalDate startDate;
-    @PastOrPresent
     private LocalDate dateConclusion;
-    @PastOrPresent
     private LocalDate cancellationDate;
     private String reasonCancellation;
     private String notes;
 
-    @AssertFalse(message = "Cancellation date or reason for cancellation should only be when the status is cancellation")
+    @AssertFalse(message = "A data de cancelamento ou o motivo do cancelamento deve ser informado apenas quando o status for CANCELAMENTO")
     public boolean isCancellation() {
         return getStatus() != null && !getStatus().equals(StatusAgreement.CANCELED) &&
-            (getDateConclusion() != null || getReasonCancellation() != null);
+            (getCancellationDate() != null || getReasonCancellation() != null);
     }
 
-    @AssertFalse(message = "The date and reason for cancellation must be informed when the status is cancellation")
+    @AssertFalse(message = "A data e o motivo do cancelamento devem ser informados quando o status for CANCELAMENTO")
     public boolean isCancellationRequired() {
         return getStatus() != null && getStatus().equals(StatusAgreement.CANCELED) &&
-            (getDateConclusion() == null || getReasonCancellation() == null);
+            (getCancellationDate() == null || getReasonCancellation() == null);
     }
 
-    @AssertFalse(message = "Conclusion date should only be when the status is completed")
+    @AssertFalse(message = "A data de conclusão deve ser informada apenas quando o status for CONCLUÍDO")
     public boolean isConclusion() {
         return getStatus() != null && !getStatus().equals(StatusAgreement.COMPLETED) && getDateConclusion() != null;
     }
 
-    @AssertFalse(message = "The completion date must be entered when the status is completed")
+    @AssertFalse(message = "A data de conclusão deve ser informada quando o status for CONCLUÍDO")
     public boolean isConclusionRequired() {
         return getStatus() != null && getStatus().equals(StatusAgreement.COMPLETED) && getDateConclusion() == null;
     }

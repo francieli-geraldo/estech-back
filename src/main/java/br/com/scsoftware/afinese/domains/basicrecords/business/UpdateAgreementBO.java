@@ -3,12 +3,14 @@ package br.com.scsoftware.afinese.domains.basicrecords.business;
 import br.com.scsoftware.afinese.domains.basicrecords.enums.StatusAgreement;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
 @Builder
+@Setter
 public class UpdateAgreementBO {
     private Long id;
     private Long programId;

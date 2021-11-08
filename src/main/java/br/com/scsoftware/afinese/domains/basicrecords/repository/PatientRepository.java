@@ -10,8 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PatientRepository extends BaseRepository<Patient> {
 
-    @Query("select p from patient p where (:name is null or p.name like %:name%) and "+
+    @Query("select p from patient p where p.tenantId = :tenantId and p.active = true and " +
+        "(:name is null or p.name like %:name%) and "+
         "(:phone is null or p.phone like %:phone%)")
-    Page<Patient> findByNameOptionalContainingAndPhoneOptionalContaining(String name, String phone, Pageable pageRequest);
+    Page<Patient> findByNameOptionalContainingAndPhoneOptionalContaining(String name, String phone, Long tenantId, Pageable pageRequest);
     
 }

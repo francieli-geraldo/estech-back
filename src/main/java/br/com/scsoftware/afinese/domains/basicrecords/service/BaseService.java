@@ -12,4 +12,8 @@ public interface BaseService<T extends BaseEntity> {
 
     Optional<T> getRecord(final Long id);
 
+    boolean delete(final Long id);
+
+    T beforeDelete(T ent);
+
 }

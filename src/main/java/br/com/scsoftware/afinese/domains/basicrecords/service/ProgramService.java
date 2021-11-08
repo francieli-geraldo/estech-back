@@ -4,4 +4,7 @@ import br.com.scsoftware.afinese.domains.basicrecords.entity.Program;
 
 public interface ProgramService extends BaseService<Program> {
 
+    Long create(Program program);
+
+    Program update(Program program);
 }

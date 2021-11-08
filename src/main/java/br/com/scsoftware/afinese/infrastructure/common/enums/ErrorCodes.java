@@ -16,6 +16,7 @@ public enum ErrorCodes {
     INTERNAL_ERROR("INTERNAL_ERROR", HttpStatus.INTERNAL_SERVER_ERROR, "Internal Error"),
     RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", HttpStatus.NOT_FOUND, "Resource Not Found"),
     AUTHORIZATION_ERROR("AUTHORIZATION_ERROR", HttpStatus.UNAUTHORIZED, "Authorization Error"),
+    FORBIDDEN_ERROR("FORBIDDEN_ERROR", HttpStatus.UNAUTHORIZED, "Forbidden Error"),
     RSA_ERROR("RSA_ERROR", HttpStatus.INTERNAL_SERVER_ERROR, "RSA Error"),
     CONFLICT_ERROR("CONFLICT_ERROR", HttpStatus.CONFLICT, "Conflict");
 

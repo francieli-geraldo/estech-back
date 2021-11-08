@@ -28,4 +28,6 @@ public interface DailyPostingService {
     Page<PeriodicReport> getPeriodicReport(Long groupId, String initialDate, String finalDate, StatusAgreement status, Long patientId, Pageable pageRequest);
 
     Page<TotalEvolutionReport> getTotalEvolutionReport(Long groupId, Long patientId, StatusAgreement status, Pageable pageRequest);
+
+    boolean existsByAgreementIdAndDateLessThanEqual(Long agreementId, LocalDate date);
 }

@@ -1,12 +1,16 @@
 package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreatePatient;
+import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateGroup;
+import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdatePatient;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.PatientResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.SummarizedPatientResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.business.CreatePatientBO;
+import br.com.scsoftware.afinese.domains.basicrecords.converter.GroupConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.PatientConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Patient;
 import br.com.scsoftware.afinese.domains.basicrecords.service.impl.PatientServiceImpl;
+import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +55,7 @@ public class PatientController {
 
     @GetMapping("/summaries")
     public ResponseEntity<Page<SummarizedPatientResponse>> getByNameOrPhone(@RequestParam(required = false) final String search,
-                                                                            @PageableDefault final Pageable page) {
+                                                                            @PageableDefault(sort="name")  final Pageable page) {
         final Page<SummarizedPatientResponse> patientList = patientService.getByNameOrPhone(search, page);
 
         if (patientList.isEmpty())
@@ -69,5 +73,19 @@ public class PatientController {
                 .toUri();
 
         return ResponseEntity.created(uriLocation).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity putRecord(@PathVariable final Long id, @Valid @RequestBody UpdatePatient updateGroup) {
+        patientService.update(PatientConverter.toBO(id, updateGroup));
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteRecord(@PathVariable final Long id) {
+        patientService.delete(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

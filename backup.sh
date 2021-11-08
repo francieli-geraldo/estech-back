@@ -22,21 +22,21 @@ sudo docker exec mysql /usr/bin/mysqldump --user=$DB_USER --password=$DB_PASSWOR
 
 ############### UPLOAD to FTP Server  ################
 
-ftp -n $FTP_SERVER << EndFTP
-user "$FTP_USERNAME" "$FTP_PASSWORD"
-binary
-hash
-cd $FTP_UPLOAD_DIR
+# ftp -n $FTP_SERVER << EndFTP
+# user "$FTP_USERNAME" "$FTP_PASSWORD"
+# binary
+# hash
+# cd $FTP_UPLOAD_DIR
 #pwd
-lcd $LOCAL_BACKUP_DIR
-put "$DB_NAME-$DATE.sql.gz"
-bye
-EndFTP
+# lcd $LOCAL_BACKUP_DIR
+# put "$DB_NAME-$DATE.sql.gz"
+# bye
+# EndFTP
 
-if test $? = 0
-then
-    echo "Database Successfully Uploaded to Ftp Server
-        File Name $DB_NAME-$DATE.sql.gz " > $LOG_FILE
-else
-    echo "Error in database Upload to Ftp Server" > $LOG_FILE
-fi
+# if test $? = 0
+# then
+#     echo "Database Successfully Uploaded to Ftp Server
+#         File Name $DB_NAME-$DATE.sql.gz " > $LOG_FILE
+# else
+#     echo "Error in database Upload to Ftp Server" > $LOG_FILE
+# fi

@@ -18,17 +18,15 @@ import java.util.Optional;
 @Repository
 public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
 
-    Page<DailyPosting> findByAgreementIdAndAgreementPatientId(Long agreementId, Long patientId, Pageable pageRequest);
+    Page<DailyPosting> findByAgreementIdAndAgreementPatientIdAndTenantId(Long agreementId, Long patientId, Long tenantId, Pageable pageRequest);
 
-    List<DailyPosting> findByAgreementIdAndAgreementPatientIdAndDateBeforeOrderByDateDesc(Long agreementId, Long patientId, LocalDate date);
+    List<DailyPosting> findByAgreementIdAndAgreementPatientIdAndDateBeforeAndTenantIdOrderByDateDesc(Long agreementId, Long patientId, LocalDate date, Long tenantId);
 
-    Optional<DailyPosting> findByIdAndAgreementIdAndAgreementPatientId(Long id, Long agreementId, Long patientId);
+    boolean existsByAgreementIdAndDateLessThanEqualAndTenantId(Long agreementId, LocalDate date, Long tenantId);
 
-    Optional<DailyPosting> findByAgreementIdAndAgreementPatientIdAndDate(Long agreementId, Long patientId, LocalDate date);
+    Optional<DailyPosting> findByIdAndAgreementIdAndAgreementPatientIdAndTenantId(Long id, Long agreementId, Long patientId, Long tenantId);
 
-    Page<DailyPosting> findByAgreementGroupIdAndAgreementPatientIdAndDateAndAgreementStatus(Long groupId, Long patientId, LocalDate date, StatusAgreement status, Pageable pageRequest);
-
-    Page<DailyPosting> findByAgreementGroupIdAndDateAndAgreementStatus(Long programId, LocalDate date, StatusAgreement status, Pageable pageRequest);
+    Optional<DailyPosting> findByAgreementIdAndAgreementPatientIdAndDateAndTenantId(Long agreementId, Long patientId, LocalDate date, Long tenantId);
 
     @Query(value = "select " +
             "   dp.id, " +
@@ -60,11 +58,12 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "    p.id = a.patient_id " +
             "  ) " +
             "where  " +
-            "    a.group_id = :groupId " +
+            "    a.tenant_id = :tenantId " +
+            "and a.group_id = :groupId " +
             "and a.start_date <= :date " +
             "and (:patientId is null or a.patient_id = :patientId) " +
             "and a.status = :status order by p.name ", nativeQuery = true)
-    List<Map<String, Object>> findByGroupIdAndPatientIdAndDateAndAgreementStatus(Long groupId, Long patientId, LocalDate date, String status);
+    List<Map<String, Object>> findByGroupIdAndPatientIdAndDateAndAgreementStatus(Long groupId, Long patientId, LocalDate date, String status, Long tenantId);
 
     @Query(value = "select " +
             "  g.name groupName, " +
@@ -106,7 +105,8 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "    g.id = a.group_id " +
             "  ) " +
             "where " +
-            "    (:groupId is null or g.id = :groupId) " +
+            "    d.tenant_id = :tenantId " +
+            "and (:groupId is null or g.id = :groupId) " +
             "and (:status is null or a.status = :status) " +
             "and (:patientId is null or p.id = :patientId) " +
             "and (:initialDate is null or d.release_date between :initialDate and :finalDate) " +
@@ -119,9 +119,29 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "order by " +
             "  g.name, " +
             "  p.name, " +
-            "  pg.name ", nativeQuery = true)
+            "  pg.name ",
+            countQuery = "select " +
+            "  count(d.id) total " +
+            "from ca" +
+            "  dailyposting d inner join agreement a on ( " +
+            "    a.id = d.agreement_id " +
+            "  ) inner join patient p on ( " +
+            "    p.id = a.patient_id " +
+            "  ) inner join programs pg on ( " +
+            "        pg.id = a.program_id " +
+            "    and pg.active = 1 " +
+            "  ) inner join grouppatients g on ( " +
+            "    g.id = a.group_id " +
+            "  ) " +
+            "where " +
+            "    d.tenant_id = :tenantId " +
+            "and (:groupId is null or g.id = :groupId) " +
+            "and (:status is null or a.status = :status) " +
+            "and (:patientId is null or p.id = :patientId) " +
+            "and (:initialDate is null or d.release_date between :initialDate and :finalDate) ",
+            nativeQuery = true)
     Page<PeriodicReport> getPeriodicReport(final Long groupId, final LocalDate initialDate, final LocalDate finalDate,
-                                           final String status, final Long patientId, final Pageable pageRequest);
+                                           final String status, final Long patientId, final Long tenantId, final Pageable pageRequest);
 
     @Query(value = "select " +
             "  g.name groupName, " +
@@ -152,7 +172,8 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "    g.id = a.group_id " +
             "  ) " +
             "where " +
-            "    (:groupId is null or g.id = :groupId) " +
+            "    d.tenant_id = :tenantId " +
+            "and (:groupId is null or g.id = :groupId) " +
             "and (:status is null or a.status = :status) " +
             "and (:patientId is null or p.id = :patientId) " +
             "group by " +
@@ -165,7 +186,26 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "order by " +
             "  g.name, " +
             "  p.name, " +
-            "  pg.name ", nativeQuery = true)
+            "  pg.name ",
+            countQuery = "select " +
+                    "  count(d.id) total " +
+                    "from " +
+                    "  dailyposting d inner join agreement a on ( " +
+                    "    a.id = d.agreement_id " +
+                    "  ) inner join patient p on ( " +
+                    "    p.id = a.patient_id " +
+                    "  ) inner join programs pg on ( " +
+                    "        pg.id = a.program_id " +
+                    "    and pg.active = 1 " +
+                    "  ) inner join grouppatients g on ( " +
+                    "    g.id = a.group_id " +
+                    "  ) " +
+                    "where " +
+                    "    d.tenant_id = :tenantId " +
+                    "and (:groupId is null or g.id = :groupId) " +
+                    "and (:status is null or a.status = :status) " +
+                    "and (:patientId is null or p.id = :patientId) ",
+            nativeQuery = true)
     Page<TotalEvolutionReport> getTotalEvolutionReport(final Long groupId, final Long patientId, final String status,
-                                                       final Pageable pageRequest);
+                                                       final Long tenantId, final Pageable pageRequest);
 }

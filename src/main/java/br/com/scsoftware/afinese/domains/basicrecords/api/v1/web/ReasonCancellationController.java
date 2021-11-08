@@ -26,7 +26,7 @@ public class ReasonCancellationController {
     private final ReasonCancellationServiceImpl reasonCancellationService;
 
     @GetMapping
-    public ResponseEntity<Page<ReasonCancellationResponse>> getAll(@PageableDefault final Pageable page) {
+    public ResponseEntity<Page<ReasonCancellationResponse>> getAll(@PageableDefault(sort="name")  final Pageable page) {
         final Page<ReasonCancellationResponse> programList = reasonCancellationService.getAllRecords(page)
                 .map(ReasonCancellationConverter::toDTO);
 

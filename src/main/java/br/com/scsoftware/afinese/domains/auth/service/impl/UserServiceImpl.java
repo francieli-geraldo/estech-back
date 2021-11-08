@@ -106,4 +106,8 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         return (AuthenticatedUserBO) authentication.getPrincipal();
     }
 
+    public static Long getTenantIdAuthenticatedUser() {
+        return getAuthenticatedUser().getTenantId();
+    }
+
 }

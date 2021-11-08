@@ -4,4 +4,8 @@ import br.com.scsoftware.afinese.domains.basicrecords.entity.Group;
 
 public interface GroupService extends BaseService<Group> {
 
+    Long create(Group group);
+
+    Group update(Group group);
+
 }

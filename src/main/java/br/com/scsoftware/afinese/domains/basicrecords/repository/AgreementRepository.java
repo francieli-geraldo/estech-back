@@ -11,9 +11,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AgreementRepository extends BaseRepository<Agreement> {
 
-    @Query(value = "SELECT a FROM agreement a WHERE (:patientId is null or a.patient.id = :patientId) " +
+    @Query(value = "SELECT a FROM agreement a WHERE a.tenantId = :tenantId " +
+            "and (:patientId is null or a.patient.id = :patientId) " +
             "and (:programId is null or a.program.id = :programId) " +
-            "and (:status is null or a.status = :status) ")
+            "and (:status is null or a.status = :status) " +
+            "and a.active = true ")
     Page<Agreement> findByPatientId(final Long patientId, final Long programId,
-                                    final StatusAgreement status, final Pageable pageRequest);
+                                    final StatusAgreement status, final Long tenantId, final Pageable pageRequest);
 }

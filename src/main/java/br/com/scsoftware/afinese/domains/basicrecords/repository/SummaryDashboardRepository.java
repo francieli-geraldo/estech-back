@@ -37,7 +37,11 @@ public interface SummaryDashboardRepository extends BaseRepository<DailyPosting>
             "  sum(d.evolution) totalWeight " +
             "from " +
             "  agreement a left join dailyposting d on ( " +
-            "    d.agreement_id = a.id " +
-            "  ) ", nativeQuery = true)
-    SummaryDashboard getSummaryDashboard();
+            "      d.agreement_id = a.id " +
+            "  and d.tenant_id = a.tenant_id " +
+            "  and d.tenant_id = a.tenant_id " +
+            "  ) " +
+            "where " +
+            "  a.tenant_id = :tenantId", nativeQuery = true)
+    SummaryDashboard getSummaryDashboard(final Long tenantId);
 }

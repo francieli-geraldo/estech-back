@@ -25,4 +25,5 @@ public interface UserService extends BaseService<User> {
     String forgotPassword(Long id, String username);
 
     void updatePassword(Long id, String newPassword);
+
 }

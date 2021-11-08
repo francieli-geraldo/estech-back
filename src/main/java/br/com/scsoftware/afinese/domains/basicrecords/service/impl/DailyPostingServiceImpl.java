@@ -1,5 +1,6 @@
 package br.com.scsoftware.afinese.domains.basicrecords.service.impl;
 
+import br.com.scsoftware.afinese.domains.auth.service.impl.UserServiceImpl;
 import br.com.scsoftware.afinese.domains.basicrecords.business.DailyPostingBO;
 import br.com.scsoftware.afinese.domains.basicrecords.business.DailyWeightInformationBO;
 import br.com.scsoftware.afinese.domains.basicrecords.business.PeriodicReport;
@@ -35,26 +36,31 @@ public class DailyPostingServiceImpl implements DailyPostingService {
 
     @Override
     public Page<DailyPosting> getAllRecords(final Long agreementId, final Long patientId, final Pageable pageRequest) {
-        return repository.findByAgreementIdAndAgreementPatientId(agreementId, patientId, pageRequest);
+        return repository.findByAgreementIdAndAgreementPatientIdAndTenantId(agreementId, patientId,
+                UserServiceImpl.getTenantIdAuthenticatedUser(), pageRequest);
     }
 
     @Override
     public List<Map<String, Object>> getAllRecords(final Long groupId, final Long patientId, final LocalDate date, final Pageable pageRequest) {
-        return repository.findByGroupIdAndPatientIdAndDateAndAgreementStatus(groupId, patientId, date, StatusAgreement.ACTIVE.name());
+        return repository.findByGroupIdAndPatientIdAndDateAndAgreementStatus(groupId, patientId, date, StatusAgreement.ACTIVE.name(),
+                UserServiceImpl.getTenantIdAuthenticatedUser());
     }
 
     @Override
     public Optional<DailyPosting> getRecord(final Long agreementId, final Long patientId, final Long id) {
-        return repository.findByIdAndAgreementIdAndAgreementPatientId(id, agreementId, patientId);
+        return repository.findByIdAndAgreementIdAndAgreementPatientIdAndTenantId(id, agreementId, patientId,
+                UserServiceImpl.getTenantIdAuthenticatedUser());
     }
 
     @Override
     public DailyPostingBO create(final DailyPostingBO dailyPosting, final Long patientId, final Long agreementId) {
         final DailyPosting dailyPostingEnt = DailyPostingConverter.fromBO(dailyPosting,
-                repository.findByAgreementIdAndAgreementPatientIdAndDate(agreementId, patientId, dailyPosting.getDate()).orElse(new DailyPosting()));
+                repository.findByAgreementIdAndAgreementPatientIdAndDateAndTenantId(agreementId, patientId, dailyPosting.getDate(),
+                        UserServiceImpl.getTenantIdAuthenticatedUser()).orElse(new DailyPosting()));
         dailyPostingEnt.setAgreement(agreementService.getRecord(agreementId).orElseThrow(() -> ResourceNotFoundException.of()));
 
-        final List<DailyPosting> dailyPostingList = repository.findByAgreementIdAndAgreementPatientIdAndDateBeforeOrderByDateDesc(agreementId, patientId, dailyPosting.getDate());
+        final List<DailyPosting> dailyPostingList = repository.findByAgreementIdAndAgreementPatientIdAndDateBeforeAndTenantIdOrderByDateDesc(agreementId,
+                patientId, dailyPosting.getDate(), UserServiceImpl.getTenantIdAuthenticatedUser());
         if (dailyPostingList.isEmpty()) {
             dailyPostingEnt.setEvolution(dailyPosting.getCurrentWeight().subtract(dailyPostingEnt.getAgreement().getStartingWeight()));
             dailyPostingEnt.setPreviousWeight(dailyPostingEnt.getAgreement().getStartingWeight());
@@ -92,20 +98,28 @@ public class DailyPostingServiceImpl implements DailyPostingService {
             finalDateLocal = LocalDate.parse(finalDate);
         }
 
-        return repository.getPeriodicReport(groupId, initialDateLocal, finalDateLocal, status == null ? null : status.name(), patientId, pageRequest);
+        return repository.getPeriodicReport(groupId, initialDateLocal, finalDateLocal, status == null ? null : status.name(), patientId,
+                UserServiceImpl.getTenantIdAuthenticatedUser(), pageRequest);
     }
 
     @Override
     public Page<TotalEvolutionReport> getTotalEvolutionReport(final Long groupId, final Long patientId,
                                                               final StatusAgreement status, final Pageable pageRequest) {
-        return repository.getTotalEvolutionReport(groupId, patientId, status == null ? null : status.name(), pageRequest);
+        return repository.getTotalEvolutionReport(groupId, patientId, status == null ? null : status.name(),
+                UserServiceImpl.getTenantIdAuthenticatedUser(), pageRequest);
+    }
+
+    @Override
+    public boolean existsByAgreementIdAndDateLessThanEqual(Long agreementId, LocalDate date) {
+        return repository.existsByAgreementIdAndDateLessThanEqualAndTenantId(agreementId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
     }
 
     public DailyWeightInformationBO getDailyWeightInformation(final Long patientId, final Agreement agreement, final LocalDate date,
                                                               BigDecimal currentWeight, BigDecimal evolution) {
         final DailyWeightInformationBO result = new DailyWeightInformationBO();
 
-        final List<DailyPosting> dailyPostingList = repository.findByAgreementIdAndAgreementPatientIdAndDateBeforeOrderByDateDesc(agreement.getId(), patientId, date);
+        final List<DailyPosting> dailyPostingList = repository.findByAgreementIdAndAgreementPatientIdAndDateBeforeAndTenantIdOrderByDateDesc(
+                agreement.getId(), patientId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
         if (dailyPostingList.isEmpty()) {
             result.setEvolution(currentWeight.subtract(agreement.getStartingWeight()));
             result.setPreviousWeight(agreement.getStartingWeight());

@@ -43,6 +43,10 @@ public abstract class BaseEntity {
     @PrePersist
     private void beforeSave() {
         if (id == null)
-            tenantId = UserServiceImpl.getAuthenticatedUser().getTenantId();
+            tenantId = UserServiceImpl.getTenantIdAuthenticatedUser();
+    }
+
+    public void invalidate() {
+        active = false;
     }
 }
