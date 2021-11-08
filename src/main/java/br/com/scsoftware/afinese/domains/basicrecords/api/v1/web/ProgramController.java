@@ -1,11 +1,8 @@
 package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 
-import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateProgram;
-import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateProgram;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.ProgramResponse;
-import br.com.scsoftware.afinese.domains.basicrecords.converter.GroupConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.ProgramConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Program;
 import br.com.scsoftware.afinese.domains.basicrecords.service.impl.ProgramServiceImpl;
@@ -32,8 +29,8 @@ public class ProgramController {
     private final ProgramServiceImpl programService;
 
     @GetMapping
-    public ResponseEntity<Page<ProgramResponse>> getAll(@PageableDefault(sort="name")  final Pageable page) {
-        final Page<ProgramResponse> programList = programService.getAllRecords(page)
+    public ResponseEntity<Page<ProgramResponse>> getAll(@RequestParam(required = false) final String search, @PageableDefault(sort="name")  final Pageable page) {
+        final Page<ProgramResponse> programList = programService.getAllRecords(page, search)
                 .map(ProgramConverter::toDTO);
 
         if (programList.isEmpty())

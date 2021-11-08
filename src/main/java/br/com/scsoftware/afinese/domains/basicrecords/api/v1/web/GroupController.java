@@ -1,11 +1,8 @@
 package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 
-import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateAgreement;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.GroupResponse;
-import br.com.scsoftware.afinese.domains.basicrecords.business.CreateAgreementBO;
-import br.com.scsoftware.afinese.domains.basicrecords.converter.AgreementConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.GroupConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Group;
 import br.com.scsoftware.afinese.domains.basicrecords.service.impl.GroupServiceImpl;
@@ -32,8 +29,8 @@ public class GroupController {
     private final GroupServiceImpl groupService;
 
     @GetMapping
-    public ResponseEntity<Page<GroupResponse>> getAll(@PageableDefault(sort="name") final Pageable page) {
-        final Page<GroupResponse> groupList = groupService.getAllRecords(page)
+    public ResponseEntity<Page<GroupResponse>> getAll(@RequestParam(required = false) final String search, @PageableDefault(sort="name") final Pageable page) {
+        final Page<GroupResponse> groupList = groupService.getAllRecords(page, search)
                 .map(GroupConverter::toDTO);
 
         if (groupList.isEmpty())
