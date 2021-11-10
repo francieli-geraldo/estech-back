@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -62,15 +63,20 @@ public class DailyPostingServiceImpl implements DailyPostingService {
         final List<DailyPosting> dailyPostingList = repository.findByAgreementIdAndAgreementPatientIdAndDateBeforeAndTenantIdOrderByDateDesc(agreementId,
                 patientId, dailyPosting.getDate(), UserServiceImpl.getTenantIdAuthenticatedUser());
         if (dailyPostingList.isEmpty()) {
-            dailyPostingEnt.setEvolution(dailyPosting.getCurrentWeight().subtract(dailyPostingEnt.getAgreement().getStartingWeight()));
             dailyPostingEnt.setPreviousWeight(dailyPostingEnt.getAgreement().getStartingWeight());
         } else {
             DailyPosting previousDailyPosting = dailyPostingList.get(0);
             if (previousDailyPosting.getDate().equals(dailyPosting.getDate()))
                 previousDailyPosting = dailyPostingList.get(1);
-            dailyPostingEnt.setEvolution(dailyPosting.getCurrentWeight().subtract(previousDailyPosting.getCurrentWeight()));
             dailyPostingEnt.setPreviousWeight(previousDailyPosting.getCurrentWeight());
         }
+
+        BigDecimal currentWeight = dailyPostingEnt.getCurrentWeight();
+        if (Objects.isNull(currentWeight) || BigDecimal.ZERO.compareTo(currentWeight) == 0) {
+            currentWeight = dailyPostingEnt.getPreviousWeight();
+        }
+        dailyPostingEnt.setCurrentWeight(currentWeight);
+        dailyPostingEnt.setEvolution(dailyPostingEnt.getCurrentWeight().subtract(dailyPostingEnt.getPreviousWeight()));
 
         dailyPostingEnt.setAccumulatedEvolution(dailyPostingEnt.getEvolution().add(BigDecimal.valueOf(dailyPostingList
                 .stream()

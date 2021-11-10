@@ -90,7 +90,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "    when dayofweek(d.release_date) in (2, 6) then 1 " +
             "    else 0 " +
             "  end) * 100, 0) balancePercentage, " +
-            "  sum(d.accumulated_evolution) evolutionPeriod, " +
+            "  sum(d.evolution) evolutionPeriod, " +
             "  a.goal - a.starting_weight goal, " +
             "  count(d.notes) notesTotal " +
             "from " +
@@ -156,9 +156,9 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "    when dayofweek(d.release_date) in (2, 6) then 1 " +
             "    else 0 " +
             "  end) * 100, 0) balancePercentage, " +
-            "  sum(d.accumulated_evolution) evolutionPeriod, " +
+            "  sum(d.evolution) evolutionPeriod, " +
             "  a.goal - a.starting_weight goal," +
-            "  sum((d.accumulated_evolution / (a.goal - a.starting_weight)) * 100) goalPercentage, " +
+            "  sum((d.evolution / (a.goal - a.starting_weight)) * 100) goalPercentage, " +
             "  count(d.notes) notesTotal " +
             "from " +
             "  dailyposting d inner join agreement a on ( " +
