@@ -11,6 +11,7 @@ import br.com.scsoftware.afinese.domains.basicrecords.service.impl.BaseServiceIm
 import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
 import br.com.scsoftware.afinese.infrastructure.common.exception.UnauthorizedException;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     }
 
     @Override
+    @Cacheable("user.username")
     public Optional<UserBO> getRecordByUserName(final String username) {
         return UserConverter.toBO(userRepository.findByUsername(username));
     }

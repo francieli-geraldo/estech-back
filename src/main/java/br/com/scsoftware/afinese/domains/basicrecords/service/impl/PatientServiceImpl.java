@@ -17,11 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PatientServiceImpl extends BaseServiceImpl<Patient> implements PatientService {
 
     private final PatientRepository patientRepository;
-    private @Autowired AgreementService agreementService;
+    @Autowired private AgreementService agreementService;
 
     public PatientServiceImpl(final PatientRepository repository) {
         super(repository);
@@ -63,7 +65,7 @@ public class PatientServiceImpl extends BaseServiceImpl<Patient> implements Pati
 
     @Override
     public Patient beforeDelete(Patient ent) {
-        if(!agreementService.getAllRecords(ent.getId(), null, null, null).isEmpty()) {
+        if (!agreementService.getAllRecords(ent.getId(), null, null, null).isEmpty()) {
             String msgErro = "Não é possível excluir este paciente, pois o mesmo já possui contratos vinculados a ele.";
             throw new ConflictException(msgErro, msgErro);
         }

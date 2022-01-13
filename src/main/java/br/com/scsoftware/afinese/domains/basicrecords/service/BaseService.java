@@ -16,4 +16,6 @@ public interface BaseService<T extends BaseEntity> {
 
     T beforeDelete(T ent);
 
+    T afterDelete(T ent);
+
 }

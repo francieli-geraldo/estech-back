@@ -15,6 +15,7 @@ import br.com.scsoftware.afinese.infrastructure.config.security.JwtTokenUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -44,6 +45,7 @@ public class JWTUserDetailsServiceImpl implements JWTUserDetailsService {
     private final EmailService emailService;
 
     @Override
+    @Cacheable("user.email")
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         final UserBO user = userService.getRecordByUserName(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));

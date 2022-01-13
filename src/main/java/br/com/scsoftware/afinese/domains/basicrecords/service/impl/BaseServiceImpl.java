@@ -38,7 +38,9 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
         entBD = beforeDelete(entBD);
 
         entBD.invalidate();
-        repository.save(entBD);
+        entBD = repository.save(entBD);
+
+        beforeDelete(entBD);
         return true;
     }
 
@@ -47,4 +49,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
         return ent;
     }
 
+    @Override
+    public T afterDelete(T ent) {
+        return ent;
+    }
 }
