@@ -41,6 +41,7 @@ public class DailyPostingConverter {
             .id(toLong(dailyPosting.get("id")))
             .date(toLocalDate(dailyPosting.get("releaseDate")))
             .agreementId(toLong(dailyPosting.get("agreementId")))
+            .agreementStartingWeight(toBigDecimal(dailyPosting.get("startingWeight")))
             .patientId(toLong(dailyPosting.get("patientId")))
             .patientName(toString(dailyPosting.get("patientName")))
             .groupId(toLong(dailyPosting.get("groupId")))

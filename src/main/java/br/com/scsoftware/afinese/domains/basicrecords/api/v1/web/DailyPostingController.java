@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -73,8 +74,8 @@ public class DailyPostingController {
                                                                            @RequestParam(required = false) final Long patientId,
                                                                            @RequestParam final String date,
                                                                            @PageableDefault final Pageable page) {
-
-        final List<DailyPostingResponse> dailyPostingList = dailyPostingService.getAllRecords(groupId, patientId, LocalDate.parse(date), page)
+        LocalDate localDate = LocalDate.parse(date);
+        final List<DailyPostingResponse> dailyPostingList = dailyPostingService.getAllRecords(groupId, patientId, localDate, page)
                 .stream()
                 .map(DailyPostingConverter::toDTO)
                 .collect(Collectors.toList());
@@ -82,11 +83,17 @@ public class DailyPostingController {
         if (dailyPostingList.isEmpty())
             return ResponseEntity.noContent().build();
 
-        dailyPostingList.forEach(dailyPosting -> {
+            dailyPostingList.forEach(dailyPosting -> {
             if (dailyPosting.getId() == null) {
-                final DailyWeightInformationBO dailyWeightInformation = dailyPostingService.getDailyWeightInformation(dailyPosting.getPatientId(),
-                        agreementService.getRecord(dailyPosting.getAgreementId()).get(),
-                        LocalDate.parse(date), dailyPosting.getBalance().getCurrentWeight(), dailyPosting.getBalance().getEvolution());
+                var balance = dailyPosting.getBalance();
+
+                final var dailyWeightInformation = dailyPostingService.getDailyWeightInformation(
+                        localDate,
+                        balance.getCurrentWeight(),
+                        balance.getEvolution(),
+                        dailyPosting.getAgreementId(),
+                        dailyPosting.getAgreementStartingWeight()
+                );
 
                 dailyPosting.getBalance().setPreviousWeight(dailyWeightInformation.getPreviousWeight());
                 dailyPosting.getBalance().setAccumulatedEvolution(dailyWeightInformation.getAccumulatedEvolution());

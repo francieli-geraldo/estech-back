@@ -1,9 +1,9 @@
 package br.com.scsoftware.afinese.domains.basicrecords.repository;
 
+import br.com.scsoftware.afinese.domains.basicrecords.business.DailyWeightInformation;
 import br.com.scsoftware.afinese.domains.basicrecords.business.PeriodicReport;
 import br.com.scsoftware.afinese.domains.basicrecords.business.TotalEvolutionReport;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.DailyPosting;
-import br.com.scsoftware.afinese.domains.basicrecords.enums.StatusAgreement;
 import br.com.scsoftware.afinese.infrastructure.common.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,19 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
 
     Page<DailyPosting> findByAgreementIdAndAgreementPatientIdAndTenantId(Long agreementId, Long patientId, Long tenantId, Pageable pageRequest);
 
-    List<DailyPosting> findByAgreementIdAndAgreementPatientIdAndDateBeforeAndTenantIdOrderByDateDesc(Long agreementId, Long patientId, LocalDate date, Long tenantId);
+    @Query(value = "select " +
+            "   release_date date, " +
+            "   current_weight currentWeight, " +
+            "   evolution evolution " +
+            "from " +
+            "   dailyposting " +
+            "where " +
+            "   agreement_id = :agreementId " +
+            "and release_date < :date " +
+            "and tenant_id    = :tenantId " +
+            "order by " +
+            "   release_date desc", nativeQuery = true)
+    List<DailyWeightInformation> getDailyWeightInformation(Long agreementId, LocalDate date, Long tenantId);
 
     boolean existsByAgreementIdAndDateLessThanEqualAndTenantId(Long agreementId, LocalDate date, Long tenantId);
 
@@ -31,6 +43,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
     @Query(value = "select " +
             "   dp.id, " +
             "   a.id agreementId, " +
+            "   a.starting_weight startingWeight, " +
             "   g.id groupId, " +
             "   g.name groupName, " +
             "   a.patient_id patientId, " +

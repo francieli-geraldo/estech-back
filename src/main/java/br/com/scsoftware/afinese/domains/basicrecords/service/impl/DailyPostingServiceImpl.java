@@ -1,12 +1,8 @@
 package br.com.scsoftware.afinese.domains.basicrecords.service.impl;
 
 import br.com.scsoftware.afinese.domains.auth.service.impl.UserServiceImpl;
-import br.com.scsoftware.afinese.domains.basicrecords.business.DailyPostingBO;
-import br.com.scsoftware.afinese.domains.basicrecords.business.DailyWeightInformationBO;
-import br.com.scsoftware.afinese.domains.basicrecords.business.PeriodicReport;
-import br.com.scsoftware.afinese.domains.basicrecords.business.TotalEvolutionReport;
+import br.com.scsoftware.afinese.domains.basicrecords.business.*;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.DailyPostingConverter;
-import br.com.scsoftware.afinese.domains.basicrecords.entity.Agreement;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.DailyPosting;
 import br.com.scsoftware.afinese.domains.basicrecords.enums.StatusAgreement;
 import br.com.scsoftware.afinese.domains.basicrecords.repository.DailyPostingRepository;
@@ -14,8 +10,12 @@ import br.com.scsoftware.afinese.domains.basicrecords.service.AgreementService;
 import br.com.scsoftware.afinese.domains.basicrecords.service.DailyPostingService;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -55,32 +55,39 @@ public class DailyPostingServiceImpl implements DailyPostingService {
 
     @Override
     public DailyPostingBO create(final DailyPostingBO dailyPosting, final Long patientId, final Long agreementId) {
+        final Long tenantId = UserServiceImpl.getTenantIdAuthenticatedUser();
+
         final DailyPosting dailyPostingEnt = DailyPostingConverter.fromBO(dailyPosting,
                 repository.findByAgreementIdAndAgreementPatientIdAndDateAndTenantId(agreementId, patientId, dailyPosting.getDate(),
-                        UserServiceImpl.getTenantIdAuthenticatedUser()).orElse(new DailyPosting()));
+                        tenantId).orElse(new DailyPosting()));
         dailyPostingEnt.setAgreement(agreementService.getRecord(agreementId).orElseThrow(() -> ResourceNotFoundException.of()));
 
-        final List<DailyPosting> dailyPostingList = repository.findByAgreementIdAndAgreementPatientIdAndDateBeforeAndTenantIdOrderByDateDesc(agreementId,
-                patientId, dailyPosting.getDate(), UserServiceImpl.getTenantIdAuthenticatedUser());
+        final List<DailyWeightInformation> dailyPostingList = repository.getDailyWeightInformation(agreementId,
+                dailyPosting.getDate(), tenantId);
+
         if (dailyPostingList.isEmpty()) {
             dailyPostingEnt.setPreviousWeight(dailyPostingEnt.getAgreement().getStartingWeight());
         } else {
-            DailyPosting previousDailyPosting = dailyPostingList.get(0);
+            DailyWeightInformation previousDailyPosting = dailyPostingList.get(0);
+
             if (previousDailyPosting.getDate().equals(dailyPosting.getDate()))
                 previousDailyPosting = dailyPostingList.get(1);
+
             dailyPostingEnt.setPreviousWeight(previousDailyPosting.getCurrentWeight());
         }
 
         BigDecimal currentWeight = dailyPostingEnt.getCurrentWeight();
+
         if (Objects.isNull(currentWeight) || BigDecimal.ZERO.compareTo(currentWeight) == 0) {
             currentWeight = dailyPostingEnt.getPreviousWeight();
         }
+
         dailyPostingEnt.setCurrentWeight(currentWeight);
         dailyPostingEnt.setEvolution(dailyPostingEnt.getCurrentWeight().subtract(dailyPostingEnt.getPreviousWeight()));
 
         dailyPostingEnt.setAccumulatedEvolution(dailyPostingEnt.getEvolution().add(BigDecimal.valueOf(dailyPostingList
                 .stream()
-                .map(DailyPosting::getEvolution)
+                .map(DailyWeightInformation::getEvolution)
                 .collect(Collectors.summingDouble(BigDecimal::doubleValue)))));
 
         return DailyPostingConverter.toBO(repository.save(dailyPostingEnt));
@@ -120,26 +127,29 @@ public class DailyPostingServiceImpl implements DailyPostingService {
         return repository.existsByAgreementIdAndDateLessThanEqualAndTenantId(agreementId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
     }
 
-    public DailyWeightInformationBO getDailyWeightInformation(final Long patientId, final Agreement agreement, final LocalDate date,
-                                                              BigDecimal currentWeight, BigDecimal evolution) {
+    public DailyWeightInformationBO getDailyWeightInformation(final LocalDate date, final BigDecimal currentWeight, final BigDecimal evolution,
+                                                              final Long agreementId, final BigDecimal agreementStartingWeight) {
         final DailyWeightInformationBO result = new DailyWeightInformationBO();
 
-        final List<DailyPosting> dailyPostingList = repository.findByAgreementIdAndAgreementPatientIdAndDateBeforeAndTenantIdOrderByDateDesc(
-                agreement.getId(), patientId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
+        final List<DailyWeightInformation> dailyPostingList = repository.getDailyWeightInformation(
+                agreementId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
+
         if (dailyPostingList.isEmpty()) {
-            result.setEvolution(currentWeight.subtract(agreement.getStartingWeight()));
-            result.setPreviousWeight(agreement.getStartingWeight());
+            result.setEvolution(currentWeight.subtract(agreementStartingWeight));
+            result.setPreviousWeight(agreementStartingWeight);
         } else {
-            DailyPosting previousDailyPosting = dailyPostingList.get(0);
+            DailyWeightInformation previousDailyPosting = dailyPostingList.get(0);
+
             if (previousDailyPosting.getDate().equals(date))
                 previousDailyPosting = dailyPostingList.get(1);
+
             result.setEvolution(currentWeight.subtract(previousDailyPosting.getCurrentWeight()));
             result.setPreviousWeight(previousDailyPosting.getCurrentWeight());
         }
 
         result.setAccumulatedEvolution(evolution.add(BigDecimal.valueOf(dailyPostingList
                 .stream()
-                .map(DailyPosting::getEvolution)
+                .map(DailyWeightInformation::getEvolution)
                 .collect(Collectors.summingDouble(BigDecimal::doubleValue)))));
 
         return result;

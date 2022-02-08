@@ -1,9 +1,11 @@
 package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response;
 
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.BalanceDailyPosting;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -11,6 +13,8 @@ import java.time.LocalDate;
 public class DailyPostingResponse {
     private Long id;
     private Long agreementId;
+    @JsonIgnore
+    private BigDecimal agreementStartingWeight;
     private Long patientId;
     private String patientName;
     private Long groupId;
