@@ -8,9 +8,11 @@ public interface DailyPostingPendingDashboard {
 
     String getPatientName();
 
-    Integer getGroupId();
+    String getPatientPhone();
 
-    String getGroupName();
+    Integer getProgramId();
+
+    String getProgramName();
 
     Long getAgreementId();
 }

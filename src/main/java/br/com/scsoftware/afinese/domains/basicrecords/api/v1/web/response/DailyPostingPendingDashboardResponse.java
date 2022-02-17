@@ -11,8 +11,9 @@ import lombok.Data;
 public class DailyPostingPendingDashboardResponse {
     private Integer patientId;
     private String patientName;
-    private Integer groupId;
-    private String groupName;
+    private String patientPhone;
+    private Integer programId;
+    private String programName;
     private Long agreementId;
 
 }

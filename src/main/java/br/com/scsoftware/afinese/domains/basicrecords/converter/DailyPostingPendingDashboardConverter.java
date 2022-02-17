@@ -8,8 +8,9 @@ public class DailyPostingPendingDashboardConverter {
         return DailyPostingPendingDashboardResponse.builder()
                 .patientId(dashboard.getPatientId())
                 .patientName(dashboard.getPatientName())
-                .groupId(dashboard.getGroupId())
-                .groupName(dashboard.getGroupName())
+                .patientPhone(dashboard.getPatientPhone())
+                .programId(dashboard.getProgramId())
+                .programName(dashboard.getProgramName())
                 .agreementId(dashboard.getAgreementId())
                 .build();
     }
