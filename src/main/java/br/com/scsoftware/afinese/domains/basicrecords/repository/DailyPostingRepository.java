@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,18 +22,19 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
     Page<DailyPosting> findByAgreementIdAndAgreementPatientIdAndTenantId(Long agreementId, Long patientId, Long tenantId, Pageable pageRequest);
 
     @Query(value = "select " +
+            "   agreement_id agreementId, " +
             "   release_date date, " +
             "   current_weight currentWeight, " +
             "   evolution evolution " +
             "from " +
             "   dailyposting " +
             "where " +
-            "   agreement_id = :agreementId " +
+            "   agreement_id in (:agreementsId) " +
             "and release_date < :date " +
             "and tenant_id    = :tenantId " +
             "order by " +
             "   release_date desc", nativeQuery = true)
-    List<DailyWeightInformation> getDailyWeightInformation(Long agreementId, LocalDate date, Long tenantId);
+    List<DailyWeightInformation> getDailyWeightInformation(ArrayList<Long> agreementsId, LocalDate date, Long tenantId);
 
     boolean existsByAgreementIdAndDateLessThanEqualAndTenantId(Long agreementId, LocalDate date, Long tenantId);
 

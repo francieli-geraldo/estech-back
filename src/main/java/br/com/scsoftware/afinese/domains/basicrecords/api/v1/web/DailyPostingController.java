@@ -3,6 +3,7 @@ package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.DailyPostingRequest;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.DailyPostingResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.business.DailyPostingBO;
+import br.com.scsoftware.afinese.domains.basicrecords.business.DailyWeightInformation;
 import br.com.scsoftware.afinese.domains.basicrecords.business.DailyWeightInformationBO;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.DailyPostingConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.DailyPosting;
@@ -21,6 +22,7 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -83,7 +85,22 @@ public class DailyPostingController {
         if (dailyPostingList.isEmpty())
             return ResponseEntity.noContent().build();
 
-            dailyPostingList.forEach(dailyPosting -> {
+        ArrayList<Long> agreementsId = new ArrayList<>();
+
+        dailyPostingList.forEach(dailyPosting -> {
+            if (dailyPosting.getId() == null) {
+                agreementsId.add(dailyPosting.getAgreementId());
+            }
+        });
+
+        if (agreementsId.isEmpty()) {
+            return ResponseEntity.ok(dailyPostingList);
+        }
+
+        final List<DailyWeightInformation> dailyWeightInformationList = dailyPostingService
+                .getDailyWeightInformation(localDate, agreementsId);
+
+        dailyPostingList.forEach(dailyPosting -> {
             if (dailyPosting.getId() == null) {
                 var balance = dailyPosting.getBalance();
 
@@ -92,6 +109,7 @@ public class DailyPostingController {
                         balance.getCurrentWeight(),
                         balance.getEvolution(),
                         dailyPosting.getAgreementId(),
+                        dailyWeightInformationList,
                         dailyPosting.getAgreementStartingWeight()
                 );
 

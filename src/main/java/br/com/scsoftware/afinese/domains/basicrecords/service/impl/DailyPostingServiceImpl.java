@@ -21,10 +21,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +59,10 @@ public class DailyPostingServiceImpl implements DailyPostingService {
                         tenantId).orElse(new DailyPosting()));
         dailyPostingEnt.setAgreement(agreementService.getRecord(agreementId).orElseThrow(() -> ResourceNotFoundException.of()));
 
-        final List<DailyWeightInformation> dailyPostingList = repository.getDailyWeightInformation(agreementId,
+        ArrayList<Long> agreementsId = new ArrayList<>();
+        agreementsId.add(agreementId);
+
+        final List<DailyWeightInformation> dailyPostingList = repository.getDailyWeightInformation(agreementsId,
                 dailyPosting.getDate(), tenantId);
 
         if (dailyPostingList.isEmpty()) {
@@ -128,30 +128,40 @@ public class DailyPostingServiceImpl implements DailyPostingService {
     }
 
     public DailyWeightInformationBO getDailyWeightInformation(final LocalDate date, final BigDecimal currentWeight, final BigDecimal evolution,
-                                                              final Long agreementId, final BigDecimal agreementStartingWeight) {
+                                                              final Long currentAgreementId, final List<DailyWeightInformation> dailyWeightList,
+                                                              final BigDecimal agreementStartingWeight) {
         final DailyWeightInformationBO result = new DailyWeightInformationBO();
 
-        final List<DailyWeightInformation> dailyPostingList = repository.getDailyWeightInformation(
-                agreementId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
+        final List<DailyWeightInformation> dailyWeightInformationList = filterDailyWeightInformationByAgreement(dailyWeightList, currentAgreementId);
 
-        if (dailyPostingList.isEmpty()) {
+        if (dailyWeightInformationList.isEmpty()) {
             result.setEvolution(currentWeight.subtract(agreementStartingWeight));
             result.setPreviousWeight(agreementStartingWeight);
         } else {
-            DailyWeightInformation previousDailyPosting = dailyPostingList.get(0);
+            DailyWeightInformation previousDailyPosting = dailyWeightInformationList.get(0);
 
             if (previousDailyPosting.getDate().equals(date))
-                previousDailyPosting = dailyPostingList.get(1);
+                previousDailyPosting = dailyWeightInformationList.get(1);
 
             result.setEvolution(currentWeight.subtract(previousDailyPosting.getCurrentWeight()));
             result.setPreviousWeight(previousDailyPosting.getCurrentWeight());
         }
 
-        result.setAccumulatedEvolution(evolution.add(BigDecimal.valueOf(dailyPostingList
+        result.setAccumulatedEvolution(evolution.add(BigDecimal.valueOf(dailyWeightInformationList
                 .stream()
                 .map(DailyWeightInformation::getEvolution)
                 .collect(Collectors.summingDouble(BigDecimal::doubleValue)))));
 
         return result;
+    }
+
+    public List<DailyWeightInformation> getDailyWeightInformation(final LocalDate date, final ArrayList<Long> agreementsId) {
+        return repository.getDailyWeightInformation(agreementsId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
+    }
+
+    private List<DailyWeightInformation> filterDailyWeightInformationByAgreement(final List<DailyWeightInformation> dailyWeightInformationList, final Long agreementId) {
+        return dailyWeightInformationList.stream()
+                .filter(d -> d.getAgreementId().compareTo(agreementId) == 0)
+                .collect(Collectors.toList());
     }
 }
