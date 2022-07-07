@@ -34,6 +34,7 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
     }
 
     @Override
+    @CacheEvict(cacheNames = {"groups.all", "groups.id"}, allEntries = true)
     public Group update(Group group) {
         return save(group);
     }

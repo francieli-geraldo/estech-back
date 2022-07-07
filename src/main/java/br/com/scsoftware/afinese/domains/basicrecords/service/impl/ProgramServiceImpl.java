@@ -34,6 +34,7 @@ public class ProgramServiceImpl extends BaseServiceImpl<Program> implements Prog
     }
 
     @Override
+    @CacheEvict(cacheNames = {"programs.all", "programs.id"}, allEntries = true)
     public Program update(Program program) {
         return save(program);
     }

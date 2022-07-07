@@ -74,11 +74,6 @@ public class AgreementServiceImpl implements AgreementService {
             throw new ConflictException(msgErro, msgErro);
         }
 
-        if (StatusAgreement.COMPLETED.equals(agreementEnt.getStatus()) && StatusAgreement.CANCELED.equals(agreement.getStatus())) {
-            String msgErro = "Um contrato concluído não pode ser marcado como cancelado.";
-            throw new ConflictException(msgErro, msgErro);
-        }
-
         if (StatusAgreement.ACTIVE.equals(agreement.getStatus()) && !StatusAgreement.ACTIVE.equals(agreementEnt.getStatus())) {
             if (!canCancelAgreement(agreementEnt)) {
                 String msgErro = "Você não pode reativar um contrato que esteja cancelado/concluído a mais de 30 dias.";

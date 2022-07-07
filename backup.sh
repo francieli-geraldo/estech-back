@@ -6,7 +6,7 @@
 ######################################################
 
 DATE=`date +%d%b%y`
-LOCAL_BACKUP_DIR="/tmp/backup/"
+LOCAL_BACKUP_DIR="C:\\temp\\backup\\"
 DB_NAME="afinese-prd"
 DB_USER="root"
 DB_PASSWORD="root"
