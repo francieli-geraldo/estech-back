@@ -1,16 +1,13 @@
 package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreatePatient;
-import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdatePatient;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.PatientResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.SummarizedPatientResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.business.CreatePatientBO;
-import br.com.scsoftware.afinese.domains.basicrecords.converter.GroupConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.PatientConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Patient;
-import br.com.scsoftware.afinese.domains.basicrecords.service.impl.PatientServiceImpl;
-import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
+import br.com.scsoftware.afinese.domains.basicrecords.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +27,7 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class PatientController {
 
-    private final PatientServiceImpl patientService;
+    private final PatientService patientService;
 
     @GetMapping
     public ResponseEntity<Page<PatientResponse>> getAll(@RequestParam(required = false) final String search,

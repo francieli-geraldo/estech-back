@@ -1,9 +1,10 @@
 package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 
+import br.com.scsoftware.afinese.domains.auth.service.impl.UserServiceImpl;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.ReasonCancellationResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.ReasonCancellationConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.ReasonCancellation;
-import br.com.scsoftware.afinese.domains.basicrecords.service.impl.ReasonCancellationServiceImpl;
+import br.com.scsoftware.afinese.domains.basicrecords.service.ReasonCancellationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +24,11 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class ReasonCancellationController {
 
-    private final ReasonCancellationServiceImpl reasonCancellationService;
+    private final ReasonCancellationService reasonCancellationService;
 
     @GetMapping
     public ResponseEntity<Page<ReasonCancellationResponse>> getAll(@PageableDefault(sort="name")  final Pageable page) {
-        final Page<ReasonCancellationResponse> programList = reasonCancellationService.getAllRecords(page)
+        final Page<ReasonCancellationResponse> programList = reasonCancellationService.getAllRecords(UserServiceImpl.getTenantIdAuthenticatedUser(), page)
                 .map(ReasonCancellationConverter::toDTO);
 
         if (programList.isEmpty())

@@ -3,6 +3,7 @@ package br.com.scsoftware.afinese.infrastructure.common.handler;
 import br.com.scsoftware.afinese.infrastructure.common.enums.ErrorCodes;
 import br.com.scsoftware.afinese.infrastructure.common.exception.BusinessException;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ConflictException;
+import br.com.scsoftware.afinese.infrastructure.common.exception.ForbiddentException;
 import br.com.scsoftware.afinese.infrastructure.common.exception.UnauthorizedException;
 import br.com.scsoftware.afinese.infrastructure.common.jsonapi.business.JsonApiError;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +85,12 @@ public class GlobalResponseExceptionHandler extends ResponseEntityExceptionHandl
 
     @ExceptionHandler(AccessDeniedException.class)
     public final ResponseEntity<Object> handleAccessDeniedException(final Exception ex, final WebRequest request) {
+        log.error(ERROR_MESSAGE, ex.getClass().getName(), request.getDescription(false), ex.getMessage());
+        return createResponseEntity(ex, ErrorCodes.FORBIDDEN_ERROR);
+    }
+
+    @ExceptionHandler(ForbiddentException.class)
+    public final ResponseEntity<Object> handleForbiddentException(final Exception ex, final WebRequest request) {
         log.error(ERROR_MESSAGE, ex.getClass().getName(), request.getDescription(false), ex.getMessage());
         return createResponseEntity(ex, ErrorCodes.FORBIDDEN_ERROR);
     }

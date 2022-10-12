@@ -5,16 +5,13 @@ import br.com.scsoftware.afinese.domains.basicrecords.entity.Program;
 import br.com.scsoftware.afinese.domains.basicrecords.repository.ProgramRepository;
 import br.com.scsoftware.afinese.domains.basicrecords.service.ProgramService;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ConflictException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -40,11 +37,15 @@ public class ProgramServiceImpl extends BaseServiceImpl<Program> implements Prog
     }
 
     private Program save(Program program) {
-        try {
-            return repository.save(program);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ConflictException(ex.getMessage(), "Já existe um programa com este nome.");
-        }
+        var programBD = programRepository.findOneByTenantIdAndActiveTrueAndName(UserServiceImpl.getTenantIdAuthenticatedUser(), program.getName());
+
+        programBD.ifPresent(e -> {
+            if (Objects.isNull(program.getId()) || (Objects.nonNull(program.getId()) && program.getId().compareTo(e.getId()) != 0)) {
+                throw new ConflictException("Já existe um programa com este nome.", "Já existe um programa com este nome.");
+            }
+        });
+
+        return repository.save(program);
     }
 
     @Override
@@ -55,8 +56,8 @@ public class ProgramServiceImpl extends BaseServiceImpl<Program> implements Prog
 
     @Override
     @Cacheable("programs.all")
-    public Page<Program> getAllRecords(Pageable pageRequest, String search) {
+    public Page<Program> getAllRecords(final Long tenantId, Pageable pageRequest, String search) {
         return programRepository.findAllByTenantIdAndActiveTrueAndNameContaining(pageRequest,
-                UserServiceImpl.getTenantIdAuthenticatedUser(), search == null ? "" : search);
+                tenantId, search == null ? "" : search);
     }
 }

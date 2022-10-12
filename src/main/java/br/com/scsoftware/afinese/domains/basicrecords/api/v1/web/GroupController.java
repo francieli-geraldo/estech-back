@@ -1,11 +1,12 @@
 package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 
+import br.com.scsoftware.afinese.domains.auth.service.impl.UserServiceImpl;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.GroupResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.GroupConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Group;
-import br.com.scsoftware.afinese.domains.basicrecords.service.impl.GroupServiceImpl;
+import br.com.scsoftware.afinese.domains.basicrecords.service.GroupService;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,11 +27,11 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class GroupController {
 
-    private final GroupServiceImpl groupService;
+    private final GroupService groupService;
 
     @GetMapping
     public ResponseEntity<Page<GroupResponse>> getAll(@RequestParam(required = false) final String search, @PageableDefault(sort="name") final Pageable page) {
-        final Page<GroupResponse> groupList = groupService.getAllRecords(page, search)
+        final Page<GroupResponse> groupList = groupService.getAllRecords(UserServiceImpl.getTenantIdAuthenticatedUser(), page, search)
                 .map(GroupConverter::toDTO);
 
         if (groupList.isEmpty())

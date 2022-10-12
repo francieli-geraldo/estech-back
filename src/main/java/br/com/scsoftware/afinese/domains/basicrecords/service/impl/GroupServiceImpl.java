@@ -5,16 +5,14 @@ import br.com.scsoftware.afinese.domains.basicrecords.entity.Group;
 import br.com.scsoftware.afinese.domains.basicrecords.repository.GroupRepository;
 import br.com.scsoftware.afinese.domains.basicrecords.service.GroupService;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ConflictException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -47,16 +45,20 @@ public class GroupServiceImpl extends BaseServiceImpl<Group> implements GroupSer
 
     @Override
     @Cacheable("groups.all")
-    public Page<Group> getAllRecords(Pageable pageRequest, String search) {
+    public Page<Group> getAllRecords(final Long tenantId, Pageable pageRequest, String search) {
         return groupRepository.findAllByTenantIdAndActiveTrueAndNameContaining(pageRequest,
-                UserServiceImpl.getTenantIdAuthenticatedUser(), search == null ? "" : search);
+                tenantId, search == null ? "" : search);
     }
 
     private Group save(Group group) {
-        try {
+        var groupBD = groupRepository.findOneByTenantIdAndActiveTrueAndName(UserServiceImpl.getTenantIdAuthenticatedUser(), group.getName());
+
+        groupBD.ifPresent(e -> {
+            if (Objects.isNull(group.getId()) || (Objects.nonNull(group.getId()) && group.getId().compareTo(e.getId()) != 0)) {
+                throw new ConflictException("Já existe um grupo com este nome.", "Já existe um grupo com este nome.");
+            }
+        });
+
             return repository.save(group);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ConflictException(ex.getMessage(), "Já existe um grupo com este nome.");
-        }
     }
 }

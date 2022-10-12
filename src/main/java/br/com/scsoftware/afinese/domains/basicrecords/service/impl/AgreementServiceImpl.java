@@ -12,13 +12,11 @@ import br.com.scsoftware.afinese.infrastructure.common.exception.BadRequestExcep
 import br.com.scsoftware.afinese.infrastructure.common.exception.BusinessException;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ConflictException;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -52,7 +50,7 @@ public class AgreementServiceImpl implements AgreementService {
     public CreateAgreementBO create(final CreateAgreementBO agreement) {
         final Agreement agreementEnt = AgreementConverter.fromBO(agreement);
 
-        agreementEnt.setPatient(patientService.getRecord(agreement.getPatientId()).orElseThrow(() -> ResourceNotFoundException.of()));
+        agreementEnt.setPatient(patientService.getRecord(agreement.getPatientId()).orElseThrow(ResourceNotFoundException::of));
         agreementEnt.setGroup(groupService.getRecord(agreement.getGroupId()).orElseThrow(() -> new BadRequestException("Group not found.")));
         agreementEnt.setProgram(programService.getRecord(agreement.getProgramId()).orElseThrow(() -> new BadRequestException("Program not found.")));
         agreementEnt.setStatus(StatusAgreement.ACTIVE);
@@ -62,7 +60,7 @@ public class AgreementServiceImpl implements AgreementService {
 
     @Override
     public UpdateAgreementBO update(final UpdateAgreementBO agreement, final Long id) {
-        Agreement agreementEnt = getRecord(id).orElseThrow(() -> ResourceNotFoundException.of());
+        Agreement agreementEnt = getRecord(id).orElseThrow(ResourceNotFoundException::of);
 
         if (StatusAgreement.CANCELED.equals(agreementEnt.getStatus()) && StatusAgreement.COMPLETED.equals(agreement.getStatus())) {
             String msgErro = "Um contrato cancelado não pode ser marcado como concluído.";

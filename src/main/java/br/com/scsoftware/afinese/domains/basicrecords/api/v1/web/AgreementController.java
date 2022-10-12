@@ -7,7 +7,7 @@ import br.com.scsoftware.afinese.domains.basicrecords.business.CreateAgreementBO
 import br.com.scsoftware.afinese.domains.basicrecords.converter.AgreementConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Agreement;
 import br.com.scsoftware.afinese.domains.basicrecords.enums.StatusAgreement;
-import br.com.scsoftware.afinese.domains.basicrecords.service.impl.AgreementServiceImpl;
+import br.com.scsoftware.afinese.domains.basicrecords.service.AgreementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +27,7 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class AgreementController {
 
-    private final AgreementServiceImpl agreementService;
+    private final AgreementService agreementService;
 
     @GetMapping
     public ResponseEntity<Page<AgreementResponse>> getAll(@RequestParam(required = false) final Long patientId,

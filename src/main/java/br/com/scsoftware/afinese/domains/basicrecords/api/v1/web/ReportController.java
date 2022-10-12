@@ -5,7 +5,7 @@ import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.TotalE
 import br.com.scsoftware.afinese.domains.basicrecords.converter.PeriodicReportConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.TotalEvolutionReportConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.enums.StatusAgreement;
-import br.com.scsoftware.afinese.domains.basicrecords.service.impl.DailyPostingServiceImpl;
+import br.com.scsoftware.afinese.domains.basicrecords.service.DailyPostingService;
 import br.com.scsoftware.afinese.infrastructure.common.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/v1/reports/")
 public class ReportController {
 
-    private final DailyPostingServiceImpl dailyPostingService;
+    private final DailyPostingService dailyPostingService;
 
     @GetMapping("periodic")
     public ResponseEntity<Page<PeriodicReportResponse>> getPeriodicReport(@RequestParam(required = false) final Long groupId,

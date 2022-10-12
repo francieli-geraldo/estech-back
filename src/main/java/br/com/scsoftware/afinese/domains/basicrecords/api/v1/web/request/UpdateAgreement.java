@@ -5,7 +5,9 @@ import br.com.scsoftware.afinese.infrastructure.common.serializer.CustomBigDecim
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.AssertFalse;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

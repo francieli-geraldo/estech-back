@@ -1,6 +1,5 @@
 package br.com.scsoftware.afinese.infrastructure.config.security;
 
-import br.com.scsoftware.afinese.infrastructure.common.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

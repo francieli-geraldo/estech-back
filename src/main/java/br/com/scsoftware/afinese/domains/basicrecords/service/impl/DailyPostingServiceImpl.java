@@ -10,12 +10,8 @@ import br.com.scsoftware.afinese.domains.basicrecords.service.AgreementService;
 import br.com.scsoftware.afinese.domains.basicrecords.service.DailyPostingService;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -57,7 +53,7 @@ public class DailyPostingServiceImpl implements DailyPostingService {
         final DailyPosting dailyPostingEnt = DailyPostingConverter.fromBO(dailyPosting,
                 repository.findByAgreementIdAndAgreementPatientIdAndDateAndTenantId(agreementId, patientId, dailyPosting.getDate(),
                         tenantId).orElse(new DailyPosting()));
-        dailyPostingEnt.setAgreement(agreementService.getRecord(agreementId).orElseThrow(() -> ResourceNotFoundException.of()));
+        dailyPostingEnt.setAgreement(agreementService.getRecord(agreementId).orElseThrow(ResourceNotFoundException::of));
 
         ArrayList<Long> agreementsId = new ArrayList<>();
         agreementsId.add(agreementId);
@@ -127,6 +123,7 @@ public class DailyPostingServiceImpl implements DailyPostingService {
         return repository.existsByAgreementIdAndDateLessThanEqualAndTenantId(agreementId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
     }
 
+    @Override
     public DailyWeightInformationBO getDailyWeightInformation(final LocalDate date, final BigDecimal currentWeight, final BigDecimal evolution,
                                                               final Long currentAgreementId, final List<DailyWeightInformation> dailyWeightList,
                                                               final BigDecimal agreementStartingWeight) {
@@ -155,6 +152,7 @@ public class DailyPostingServiceImpl implements DailyPostingService {
         return result;
     }
 
+    @Override
     public List<DailyWeightInformation> getDailyWeightInformation(final LocalDate date, final ArrayList<Long> agreementsId) {
         return repository.getDailyWeightInformation(agreementsId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
     }

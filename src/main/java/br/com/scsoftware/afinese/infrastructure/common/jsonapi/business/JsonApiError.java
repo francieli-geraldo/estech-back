@@ -1,7 +1,7 @@
 package br.com.scsoftware.afinese.infrastructure.common.jsonapi.business;
 
-import lombok.Getter;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 

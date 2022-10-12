@@ -4,11 +4,10 @@ import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.DailyPo
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.DailyPostingResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.business.DailyPostingBO;
 import br.com.scsoftware.afinese.domains.basicrecords.business.DailyWeightInformation;
-import br.com.scsoftware.afinese.domains.basicrecords.business.DailyWeightInformationBO;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.DailyPostingConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.DailyPosting;
-import br.com.scsoftware.afinese.domains.basicrecords.service.impl.AgreementServiceImpl;
-import br.com.scsoftware.afinese.domains.basicrecords.service.impl.DailyPostingServiceImpl;
+import br.com.scsoftware.afinese.domains.basicrecords.service.AgreementService;
+import br.com.scsoftware.afinese.domains.basicrecords.service.DailyPostingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,8 +31,8 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class DailyPostingController {
 
-    private final DailyPostingServiceImpl dailyPostingService;
-    private final AgreementServiceImpl agreementService;
+    private final DailyPostingService dailyPostingService;
+    private final AgreementService agreementService;
 
     @GetMapping("{patientId}/agreements/{agreementId}/dailies")
     public ResponseEntity<Page<DailyPostingResponse>> getAll(@PathVariable final Long patientId, @PathVariable final Long agreementId,

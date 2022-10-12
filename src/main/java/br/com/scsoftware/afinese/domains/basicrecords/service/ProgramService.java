@@ -10,5 +10,5 @@ public interface ProgramService extends BaseService<Program> {
 
     Program update(Program program);
 
-    Page<Program> getAllRecords(final Pageable pageRequest, final String search);
+    Page<Program> getAllRecords(final Long tenantId, final Pageable pageRequest, final String search);
 }

@@ -9,7 +9,6 @@ import br.com.scsoftware.afinese.domains.basicrecords.repository.LaunchedPending
 import br.com.scsoftware.afinese.domains.basicrecords.repository.SummaryDashboardRepository;
 import br.com.scsoftware.afinese.domains.basicrecords.service.DashboardService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

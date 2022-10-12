@@ -18,8 +18,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
     }
 
     @Override
-    public Page<T> getAllRecords(final Pageable pageRequest) {
-        return repository.findAllByTenantIdAndActiveTrue(pageRequest, UserServiceImpl.getTenantIdAuthenticatedUser());
+    public Page<T> getAllRecords(final Long tenantId, final Pageable pageRequest) {
+        return repository.findAllByTenantIdAndActiveTrue(pageRequest, tenantId);
     }
 
     @Override
@@ -29,7 +29,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
 
     @Override
     public boolean delete(Long id) {
-        T entBD = getRecord(id).orElseThrow(() -> ResourceNotFoundException.of());
+        T entBD = getRecord(id).orElseThrow(ResourceNotFoundException::of);
 
         if (!entBD.isActive()) {
             throw ResourceNotFoundException.of();

@@ -7,12 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -42,7 +37,7 @@ public abstract class BaseEntity {
 
     @PrePersist
     private void beforeSave() {
-        if (id == null)
+        if (id == null && tenantId == null)
             tenantId = UserServiceImpl.getTenantIdAuthenticatedUser();
     }
 

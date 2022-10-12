@@ -1,11 +1,12 @@
 package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 
+import br.com.scsoftware.afinese.domains.auth.service.impl.UserServiceImpl;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateProgram;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateProgram;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.ProgramResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.ProgramConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Program;
-import br.com.scsoftware.afinese.domains.basicrecords.service.impl.ProgramServiceImpl;
+import br.com.scsoftware.afinese.domains.basicrecords.service.ProgramService;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,11 +27,11 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class ProgramController {
 
-    private final ProgramServiceImpl programService;
+    private final ProgramService programService;
 
     @GetMapping
     public ResponseEntity<Page<ProgramResponse>> getAll(@RequestParam(required = false) final String search, @PageableDefault(sort="name")  final Pageable page) {
-        final Page<ProgramResponse> programList = programService.getAllRecords(page, search)
+        final Page<ProgramResponse> programList = programService.getAllRecords(UserServiceImpl.getTenantIdAuthenticatedUser(), page, search)
                 .map(ProgramConverter::toDTO);
 
         if (programList.isEmpty())

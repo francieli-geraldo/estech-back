@@ -17,13 +17,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 public class PatientServiceImpl extends BaseServiceImpl<Patient> implements PatientService {
 
     private final PatientRepository patientRepository;
-    @Autowired private AgreementService agreementService;
+    @Autowired
+    private AgreementService agreementService;
 
     public PatientServiceImpl(final PatientRepository repository) {
         super(repository);
@@ -38,7 +39,7 @@ public class PatientServiceImpl extends BaseServiceImpl<Patient> implements Pati
     @Override
     public UpdatePatientBO update(UpdatePatientBO patient) {
         return PatientConverter.toUpdateBO(save(PatientConverter.fromBO(getRecord(patient.getId())
-                .orElseThrow(() -> ResourceNotFoundException.of()), patient)));
+                .orElseThrow(ResourceNotFoundException::of), patient)));
     }
 
     @Override
@@ -73,11 +74,14 @@ public class PatientServiceImpl extends BaseServiceImpl<Patient> implements Pati
     }
 
     private Patient save(Patient patient) {
-        try {
-            return repository.save(patient);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ConflictException(ex.getMessage(), "Já existe um paciente com este nome.");
-        }
-    }
+        var patientBD = patientRepository.findOneByTenantIdAndActiveTrueAndName(UserServiceImpl.getTenantIdAuthenticatedUser(), patient.getName());
 
+        patientBD.ifPresent(e -> {
+            if (Objects.isNull(patient.getId()) || (Objects.nonNull(patient.getId()) && patient.getId().compareTo(e.getId()) != 0)) {
+                throw new ConflictException("Já existe um paciente com este nome.", "Já existe um paciente com este nome.");
+            }
+        });
+
+        return repository.save(patient);
+    }
 }

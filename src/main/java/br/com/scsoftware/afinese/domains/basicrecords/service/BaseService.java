@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface BaseService<T extends BaseEntity> {
 
-    Page<T> getAllRecords(final Pageable pageRequest);
+    Page<T> getAllRecords(final Long tenantId, final Pageable pageRequest);
 
     Optional<T> getRecord(final Long id);
 

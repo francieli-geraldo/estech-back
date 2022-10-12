@@ -1,11 +1,8 @@
 package br.com.scsoftware.afinese.domains.basicrecords.converter;
 
-import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateProgram;
-import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateGroup;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateProgram;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.ProgramResponse;
-import br.com.scsoftware.afinese.domains.basicrecords.entity.Group;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Program;
 
 public class ProgramConverter {

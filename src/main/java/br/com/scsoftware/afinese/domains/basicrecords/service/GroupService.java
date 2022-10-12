@@ -10,5 +10,5 @@ public interface GroupService extends BaseService<Group> {
 
     Group update(Group group);
 
-    Page<Group> getAllRecords(final Pageable pageRequest, final String search);
+    Page<Group> getAllRecords(final Long tenantId, final Pageable pageRequest, final String search);
 }
