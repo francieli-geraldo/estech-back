@@ -14,12 +14,15 @@ import br.com.scsoftware.afinese.infrastructure.common.exception.ConflictExcepti
 import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AgreementServiceImpl implements AgreementService {
@@ -38,7 +41,24 @@ public class AgreementServiceImpl implements AgreementService {
     @Override
     public Page<Agreement> getAllRecords(final Long patientId, final Long programId, final StatusAgreement status,
                                          final Pageable pageRequest) {
-        return repository.findByPatientId(patientId, programId, status, UserServiceImpl.getTenantIdAuthenticatedUser(), pageRequest);
+        var statusToSearch = status;
+        if (Objects.nonNull(status) && StatusAgreement.OVERDUE.equals(status) || StatusAgreement.OVERDUE_LESS_7.equals(status) ||
+                StatusAgreement.OVERDUE_LESS_15.equals(status) || StatusAgreement.OVERDUE_LESS_30.equals(status)) {
+            statusToSearch = StatusAgreement.ACTIVE;
+
+            var daysOfOverdue = 0;
+            if (StatusAgreement.OVERDUE_LESS_7.equals(status)) {
+                daysOfOverdue = 7;
+            } else if (StatusAgreement.OVERDUE_LESS_15.equals(status)) {
+                daysOfOverdue = 15;
+            } else if (StatusAgreement.OVERDUE_LESS_30.equals(status)) {
+                daysOfOverdue = 30;
+            }
+
+            return repository.findAll(patientId, programId, statusToSearch, UserServiceImpl.getTenantIdAuthenticatedUser(), daysOfOverdue , LocalDate.now(), pageRequest);
+        }
+
+        return repository.findAll(patientId, programId, statusToSearch, UserServiceImpl.getTenantIdAuthenticatedUser(), pageRequest);
     }
 
     @Override
@@ -83,13 +103,13 @@ public class AgreementServiceImpl implements AgreementService {
             }
         }
 
-        if(agreement.getStartDate().compareTo(agreement.getHiringDate()) > 0) {
+        if (agreement.getStartDate().compareTo(agreement.getHiringDate()) > 0) {
             String msgErro = "A data de início do contrato não pode ser maior que a data prevista para encerramento.";
             throw new BusinessException(msgErro, msgErro);
         }
 
-        if(agreementEnt.getStartDate().compareTo(agreement.getStartDate()) != 0) {
-            if(dailyPostingService.existsByAgreementIdAndDateLessThanEqual(agreementEnt.getId(), agreementEnt.getStartDate())) {
+        if (agreementEnt.getStartDate().compareTo(agreement.getStartDate()) != 0) {
+            if (dailyPostingService.existsByAgreementIdAndDateLessThanEqual(agreementEnt.getId(), agreementEnt.getStartDate())) {
                 String msgErro = "Não é permitido alterar a data de início, pois já existem lançamentos para este contrato.";
                 throw new ConflictException(msgErro, msgErro);
             }

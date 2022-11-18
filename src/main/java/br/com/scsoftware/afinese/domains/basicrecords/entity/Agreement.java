@@ -1,6 +1,7 @@
 package br.com.scsoftware.afinese.domains.basicrecords.entity;
 
 import br.com.scsoftware.afinese.domains.basicrecords.enums.StatusAgreement;
+import br.com.scsoftware.afinese.domains.basicrecords.utils.DateUtils;
 import br.com.scsoftware.afinese.infrastructure.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -60,4 +62,20 @@ public class Agreement extends BaseEntity {
 
     @Column(name = "notes")
     private String notes;
+
+    public StatusAgreement getStatus() {
+        if (Objects.nonNull(status) && status.equals(StatusAgreement.ACTIVE)) {
+            int numberOfDayBetween = DateUtils.numberOfDayBetween(LocalDate.now(), hiringDate);
+            if (numberOfDayBetween < 0) {
+                return StatusAgreement.OVERDUE;
+            } else if (numberOfDayBetween <= 7) {
+                return StatusAgreement.OVERDUE_LESS_7;
+            } else if (numberOfDayBetween <= 15) {
+                return StatusAgreement.OVERDUE_LESS_15;
+            } else if (numberOfDayBetween <= 30) {
+                return StatusAgreement.OVERDUE_LESS_30;
+            }
+        }
+        return status;
+    }
 }

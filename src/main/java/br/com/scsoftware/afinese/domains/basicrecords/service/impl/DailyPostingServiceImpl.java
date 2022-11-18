@@ -107,15 +107,21 @@ public class DailyPostingServiceImpl implements DailyPostingService {
             finalDateLocal = LocalDate.parse(finalDate);
         }
 
-        return repository.getPeriodicReport(groupId, initialDateLocal, finalDateLocal, status == null ? null : status.name(), patientId,
-                UserServiceImpl.getTenantIdAuthenticatedUser(), pageRequest);
+        var statusToSearch = getStatusToSearchInDatabase(status);
+        Integer daysOfOverdue = getDaysOfOverdueByStatus(status);
+
+        return repository.getPeriodicReport(groupId, initialDateLocal, finalDateLocal, statusToSearch == null ? null : statusToSearch.name(), patientId,
+                UserServiceImpl.getTenantIdAuthenticatedUser(), daysOfOverdue, pageRequest);
     }
 
     @Override
     public Page<TotalEvolutionReport> getTotalEvolutionReport(final Long groupId, final Long patientId,
                                                               final StatusAgreement status, final Pageable pageRequest) {
-        return repository.getTotalEvolutionReport(groupId, patientId, status == null ? null : status.name(),
-                UserServiceImpl.getTenantIdAuthenticatedUser(), pageRequest);
+        var statusToSearch = getStatusToSearchInDatabase(status);
+        Integer daysOfOverdue = getDaysOfOverdueByStatus(status);
+
+        return repository.getTotalEvolutionReport(groupId, patientId, statusToSearch == null ? null : statusToSearch.name(),
+                UserServiceImpl.getTenantIdAuthenticatedUser(), daysOfOverdue, pageRequest);
     }
 
     @Override
@@ -161,5 +167,32 @@ public class DailyPostingServiceImpl implements DailyPostingService {
         return dailyWeightInformationList.stream()
                 .filter(d -> d.getAgreementId().compareTo(agreementId) == 0)
                 .collect(Collectors.toList());
+    }
+
+    private StatusAgreement getStatusToSearchInDatabase(StatusAgreement status) {
+        if (Objects.nonNull(status) && StatusAgreement.OVERDUE.equals(status) || StatusAgreement.OVERDUE_LESS_7.equals(status) ||
+                StatusAgreement.OVERDUE_LESS_15.equals(status) || StatusAgreement.OVERDUE_LESS_30.equals(status)) {
+            return StatusAgreement.ACTIVE;
+        }
+
+        return status;
+    }
+
+    private Integer getDaysOfOverdueByStatus(StatusAgreement status) {
+        Integer daysOfOverdue = null;
+
+        if (Objects.nonNull(status) && StatusAgreement.OVERDUE.equals(status) || StatusAgreement.OVERDUE_LESS_7.equals(status) ||
+                StatusAgreement.OVERDUE_LESS_15.equals(status) || StatusAgreement.OVERDUE_LESS_30.equals(status)) {
+            daysOfOverdue = 0;
+            if (StatusAgreement.OVERDUE_LESS_7.equals(status)) {
+                daysOfOverdue = 7;
+            } else if (StatusAgreement.OVERDUE_LESS_15.equals(status)) {
+                daysOfOverdue = 15;
+            } else if (StatusAgreement.OVERDUE_LESS_30.equals(status)) {
+                daysOfOverdue = 30;
+            }
+        }
+
+        return daysOfOverdue;
     }
 }

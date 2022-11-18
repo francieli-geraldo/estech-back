@@ -125,6 +125,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "and (:status is null or a.status = :status) " +
             "and (:patientId is null or p.id = :patientId) " +
             "and (:initialDate is null or d.release_date between :initialDate and :finalDate) " +
+            "and (:daysOfOverdue is null or DATEDIFF(a.hiring_date, now()) < :daysOfOverdue) " +
             "group by " +
             "  g.name, " +
             "  p.name, " +
@@ -153,16 +154,25 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "and (:groupId is null or g.id = :groupId) " +
             "and (:status is null or a.status = :status) " +
             "and (:patientId is null or p.id = :patientId) " +
-            "and (:initialDate is null or d.release_date between :initialDate and :finalDate) ",
+            "and (:initialDate is null or d.release_date between :initialDate and :finalDate) " +
+            "and (:daysOfOverdue is null or DATEDIFF(a.hiring_date, now()) < :daysOfOverdue) ",
             nativeQuery = true)
     Page<PeriodicReport> getPeriodicReport(final Long groupId, final LocalDate initialDate, final LocalDate finalDate,
-                                           final String status, final Long patientId, final Long tenantId, final Pageable pageRequest);
+                                           final String status, final Long patientId, final Long tenantId,
+                                           final Integer daysOfOverdue, final Pageable pageRequest);
 
     @Query(value = "select " +
             "  g.name groupName, " +
             "  p.name patientName, " +
             "  pg.name programName, " +
-            "  a.status, " +
+            "  case " +
+            "    when a.status <> 'ACTIVE' then a.status " +
+            "    when a.status = 'ACTIVE' and not :daysOfOverdue is null and DATEDIFF(a.hiring_date, now()) < 0 then 'OVERDUE'" +
+            "    when a.status = 'ACTIVE' and not :daysOfOverdue is null and DATEDIFF(a.hiring_date, now()) < 7 then 'OVERDUE_LESS_7'" +
+            "    when a.status = 'ACTIVE' and not :daysOfOverdue is null and DATEDIFF(a.hiring_date, now()) < 15 then 'OVERDUE_LESS_15'" +
+            "    when a.status = 'ACTIVE' and not :daysOfOverdue is null and DATEDIFF(a.hiring_date, now()) < 30 then 'OVERDUE_LESS_30'" +
+            "    else a.status" +
+            "  end status, " +
             "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
             "  coalesce(sum(case " +
             "    when dayofweek(d.release_date) in (2, 6) and d.balance then 1 " +
@@ -191,6 +201,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "and (:groupId is null or g.id = :groupId) " +
             "and (:status is null or a.status = :status) " +
             "and (:patientId is null or p.id = :patientId) " +
+            "and (:daysOfOverdue is null or DATEDIFF(a.hiring_date, now()) < :daysOfOverdue) " +
             "group by " +
             "  g.name, " +
             "  p.name, " +
@@ -219,8 +230,9 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
                     "    d.tenant_id = :tenantId " +
                     "and (:groupId is null or g.id = :groupId) " +
                     "and (:status is null or a.status = :status) " +
-                    "and (:patientId is null or p.id = :patientId) ",
+                    "and (:patientId is null or p.id = :patientId) " +
+                    "and (:daysOfOverdue is null or DATEDIFF(a.hiring_date, now()) < :daysOfOverdue) ",
             nativeQuery = true)
     Page<TotalEvolutionReport> getTotalEvolutionReport(final Long groupId, final Long patientId, final String status,
-                                                       final Long tenantId, final Pageable pageRequest);
+                                                       final Long tenantId, final Integer daysOfOverdue, final Pageable pageRequest);
 }
