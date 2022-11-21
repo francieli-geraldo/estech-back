@@ -78,4 +78,13 @@ public class Agreement extends BaseEntity {
         }
         return status;
     }
+
+    public boolean isOpened() {
+        if (Objects.isNull(status)) {
+            return false;
+        }
+
+        return StatusAgreement.ACTIVE.equals(status) || StatusAgreement.OVERDUE.equals(status) || StatusAgreement.OVERDUE_LESS_7.equals(status) ||
+                StatusAgreement.OVERDUE_LESS_15.equals(status) || StatusAgreement.OVERDUE_LESS_30.equals(status);
+    }
 }
