@@ -13,6 +13,20 @@ spring:
       fail-on-unknown-properties: false
     mapper:
       accept-case-insensitive-enums: false
+  mail:
+    host: email-smtp.us-east-2.amazonaws.com
+    port: 587
+    username: AKIATBYRJVUTHNVPVZG2
+    password: BCfH1lo829BH30dbO0/kimPIRvYd4BsopSxA5UN4Bclr
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 server:
   port: ${SERVICE_PORT}

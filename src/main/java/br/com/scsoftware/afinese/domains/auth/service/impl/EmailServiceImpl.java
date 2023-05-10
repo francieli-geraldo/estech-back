@@ -28,7 +28,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             email.getModel().put("subject", email.getSubject());
 
-            String from = "SC Software <suporte@scsoftware.com.br>";
+            String from = "SC Software <suporte@scsoftware.link>";
             if (email.getFrom() != null)
                 from = email.getFrom();
 

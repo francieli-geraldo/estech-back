@@ -10,21 +10,6 @@ spring:
       connectionTimeout: 60000
       idleTimeout: 600000
       maxLifetime: 1800000
-  mail:
-    host: h58.servidorhh.com
-    port: 587
-    username: suporte@scsoftware.com.br
-    password: ONk3mnyeU
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
-
   jpa:
     show-sql: false
     properties:

@@ -6,21 +6,6 @@ spring:
     url: jdbc:mysql://172.17.0.2:3306/afinese-dev?createDatabaseIfNotExist=true
     username: root
     password: root
-  mail:
-    host: mail.scsoftware.com.br
-    port: 587
-    username: suporte@scsoftware.com.br
-    password: ONk3mnyeU
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
-
   jpa:
     show-sql: false
     properties:

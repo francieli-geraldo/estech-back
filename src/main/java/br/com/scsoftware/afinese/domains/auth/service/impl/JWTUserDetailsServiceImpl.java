@@ -89,7 +89,7 @@ public class JWTUserDetailsServiceImpl implements JWTUserDetailsService {
         final UserBO userBO = userService.getRecordByUserName(username).orElseThrow(ResourceNotFoundException::of);
 
         Map<String, Object> model = new HashMap<>();
-        model.put("firstName", userBO.getName().split(" ")[0]);
+        model.put("firstName", userBO.getFamilyName());
         model.put("email", username);
 
         final Mail email = Mail.builder()
@@ -113,7 +113,7 @@ public class JWTUserDetailsServiceImpl implements JWTUserDetailsService {
         final String passwordResetToken = userService.forgotPassword(userBO.getId(), username);
 
         Map<String, Object> model = new HashMap<>();
-        model.put("firstName", userBO.getName().split(" ")[0]);
+        model.put("firstName", userBO.getFamilyName());
         model.put("email", username);
         model.put("date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss")));
         model.put("token", passwordResetToken);
