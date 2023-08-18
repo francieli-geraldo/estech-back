@@ -6,7 +6,6 @@ import br.com.scsoftware.afinese.domains.basicrecords.business.DailyPostingBO;
 import br.com.scsoftware.afinese.domains.basicrecords.business.DailyWeightInformation;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.DailyPostingConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.DailyPosting;
-import br.com.scsoftware.afinese.domains.basicrecords.service.AgreementService;
 import br.com.scsoftware.afinese.domains.basicrecords.service.DailyPostingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,7 +31,6 @@ import java.util.stream.Collectors;
 public class DailyPostingController {
 
     private final DailyPostingService dailyPostingService;
-    private final AgreementService agreementService;
 
     @GetMapping("{patientId}/agreements/{agreementId}/dailies")
     public ResponseEntity<Page<DailyPostingResponse>> getAll(@PathVariable final Long patientId, @PathVariable final Long agreementId,
@@ -80,8 +78,9 @@ public class DailyPostingController {
                 .map(DailyPostingConverter::toDTO)
                 .collect(Collectors.toList());
 
-        if (dailyPostingList.isEmpty())
+        if (dailyPostingList.isEmpty()) {
             return ResponseEntity.noContent().build();
+        }
 
         ArrayList<Long> agreementsId = new ArrayList<>();
 

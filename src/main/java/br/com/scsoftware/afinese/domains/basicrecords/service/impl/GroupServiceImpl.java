@@ -7,7 +7,6 @@ import br.com.scsoftware.afinese.domains.basicrecords.service.GroupService;
 import br.com.scsoftware.afinese.infrastructure.common.exception.ConflictException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

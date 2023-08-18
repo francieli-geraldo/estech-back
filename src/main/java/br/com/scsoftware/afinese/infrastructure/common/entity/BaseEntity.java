@@ -33,6 +33,7 @@ public abstract class BaseEntity {
     private boolean active = true;
 
     @Column(name = "tenant_id")
+    @Setter(AccessLevel.PROTECTED)
     private Long tenantId;
 
     @PrePersist

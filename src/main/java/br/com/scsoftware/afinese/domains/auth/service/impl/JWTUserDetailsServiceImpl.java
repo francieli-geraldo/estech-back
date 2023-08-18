@@ -4,6 +4,8 @@ package br.com.scsoftware.afinese.domains.auth.service.impl;
 import br.com.scsoftware.afinese.domains.auth.business.AuthenticatedUserBO;
 import br.com.scsoftware.afinese.domains.auth.business.UserBO;
 import br.com.scsoftware.afinese.domains.auth.business.UserResetPasswordBO;
+import br.com.scsoftware.afinese.domains.auth.entity.UserHistory;
+import br.com.scsoftware.afinese.domains.auth.repository.UserHistoryRepository;
 import br.com.scsoftware.afinese.domains.auth.service.EmailService;
 import br.com.scsoftware.afinese.domains.auth.service.JWTUserDetailsService;
 import br.com.scsoftware.afinese.domains.auth.service.Mail;
@@ -39,6 +41,7 @@ public class JWTUserDetailsServiceImpl implements JWTUserDetailsService {
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
     private final EmailService emailService;
+    private final UserHistoryRepository userHistoryRepository;
 
     @Override
     @Cacheable("user.email")
@@ -73,8 +76,13 @@ public class JWTUserDetailsServiceImpl implements JWTUserDetailsService {
     public String authenticate(final String username, final String password, final AuthenticationManager authenticationManager) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            var user = loadUserByUsername(username);
 
-            return jwtTokenUtil.generateToken(loadUserByUsername(username));
+            var userHistory = new UserHistory(user.getUsername());
+            userHistory.setTenantId(1L);
+            userHistoryRepository.save(userHistory);
+
+            return jwtTokenUtil.generateToken(user);
         } catch (DisabledException | LockedException e) {
             throw new ForbiddentException("USER_DISABLED");
         } catch (BadCredentialsException e) {

@@ -14,7 +14,6 @@ import br.com.scsoftware.afinese.infrastructure.common.exception.ConflictExcepti
 import br.com.scsoftware.afinese.infrastructure.common.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AgreementServiceImpl implements AgreementService {
