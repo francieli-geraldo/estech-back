@@ -2,6 +2,7 @@ package br.com.scsoftware.afinese.domains.basicrecords.api.v1.web;
 
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.CreateAgreement;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.request.UpdateAgreement;
+import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.AgreementProgramMonitoringResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.AgreementResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.business.CreateAgreementBO;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.AgreementConverter;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -44,12 +46,22 @@ public class AgreementController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AgreementResponse> getRecord(@PathVariable final Long id) {
-        Optional<Agreement> agreement = agreementService.getRecord(id);
+    public ResponseEntity<AgreementResponse> getRecord(@PathVariable("id") final Long agreementId) {
+        Optional<Agreement> agreement = agreementService.getRecord(agreementId);
         if (agreement.isEmpty())
             return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(AgreementConverter.toDTO(agreement.get()));
+    }
+
+    @GetMapping("/{id}/program-monitoring-form")
+    public ResponseEntity<AgreementProgramMonitoringResponse> getProgramMonitoring(@PathVariable("id") final Long agreementId) {
+        var response = agreementService.getProgramMonitoring(agreementId);
+        if(Objects.isNull(response)) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping

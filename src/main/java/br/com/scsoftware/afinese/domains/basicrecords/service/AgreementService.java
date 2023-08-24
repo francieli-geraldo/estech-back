@@ -1,5 +1,6 @@
 package br.com.scsoftware.afinese.domains.basicrecords.service;
 
+import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.AgreementProgramMonitoringResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.business.CreateAgreementBO;
 import br.com.scsoftware.afinese.domains.basicrecords.business.UpdateAgreementBO;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Agreement;
@@ -13,9 +14,11 @@ public interface AgreementService {
 
     Page<Agreement> getAllRecords(Long patientId, Long programId, StatusAgreement status, Pageable pageRequest);
 
-    Optional<Agreement> getRecord(Long id);
+    Optional<Agreement> getRecord(Long agreementId);
 
     CreateAgreementBO create(CreateAgreementBO agreement);
 
-    UpdateAgreementBO update(UpdateAgreementBO agreement, Long id);
+    UpdateAgreementBO update(UpdateAgreementBO agreement, Long agreementId);
+
+    AgreementProgramMonitoringResponse getProgramMonitoring(Long agreementId);
 }

@@ -25,7 +25,7 @@ public interface DailyPostingService {
 
     DailyPostingBO update(DailyPostingBO dailyPosting, Long patientId, Long agreementId, Long id);
 
-    Page<PeriodicReport> getPeriodicReport(Long groupId, String initialDate, String Date, StatusAgreement status, Long patientId, Pageable pageRequest);
+    Page<PeriodicReport> getPeriodicReport(Long groupId, String initialDate, String Date, StatusAgreement status, Long patientId, Long agreementId, Pageable pageRequest);
 
     Page<TotalEvolutionReport> getTotalEvolutionReport(Long groupId, Long patientId, StatusAgreement status, Pageable pageRequest);
 
@@ -36,4 +36,6 @@ public interface DailyPostingService {
                                                        BigDecimal agreementStartingWeight);
 
     List<DailyWeightInformation> getDailyWeightInformation(LocalDate date, ArrayList<Long> agreementsId);
+
+    List<DailyWeightInformation> getDailyWeightInformation(Long agreementId);
 }

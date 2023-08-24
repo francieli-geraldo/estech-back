@@ -49,7 +49,7 @@ public class ReportController {
         }
 
         final Page<PeriodicReportResponse> listPeriodicReport = dailyPostingService.getPeriodicReport(groupId,
-                        initialDate, finalDate, statusAgreement, patientId, page)
+                        initialDate, finalDate, statusAgreement, patientId, null, page)
                 .map(PeriodicReportConverter::toDTO);
 
         if (listPeriodicReport.isEmpty())

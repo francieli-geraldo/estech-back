@@ -83,7 +83,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
                 .concat(id.toString())
                 .concat(UUID.randomUUID().toString())
                 .toUpperCase().replace("-", "");
-        final User user = getRecord(id).get();
+        final User user = getById(id);
         user.setPasswordResetToken(passwordResetToken);
         user.setPasswordResetExpires(Timestamp.valueOf(LocalDateTime.now().plusHours(1L)));
         repository.save(user);
@@ -93,7 +93,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
     @Override
     public void updatePassword(final Long id, final String newPassword) {
-        final User user = getRecord(id).get();
+        final User user = getById(id);
         user.setPasswordResetToken(null);
         user.setPasswordResetExpires(null);
         user.setPassword(newPassword);

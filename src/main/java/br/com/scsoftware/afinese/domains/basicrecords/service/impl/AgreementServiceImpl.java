@@ -1,9 +1,12 @@
 package br.com.scsoftware.afinese.domains.basicrecords.service.impl;
 
 import br.com.scsoftware.afinese.domains.auth.service.impl.UserServiceImpl;
+import br.com.scsoftware.afinese.domains.basicrecords.api.v1.web.response.AgreementProgramMonitoringResponse;
 import br.com.scsoftware.afinese.domains.basicrecords.business.CreateAgreementBO;
+import br.com.scsoftware.afinese.domains.basicrecords.business.PeriodicReport;
 import br.com.scsoftware.afinese.domains.basicrecords.business.UpdateAgreementBO;
 import br.com.scsoftware.afinese.domains.basicrecords.converter.AgreementConverter;
+import br.com.scsoftware.afinese.domains.basicrecords.converter.DailyPostingConverter;
 import br.com.scsoftware.afinese.domains.basicrecords.entity.Agreement;
 import br.com.scsoftware.afinese.domains.basicrecords.enums.StatusAgreement;
 import br.com.scsoftware.afinese.domains.basicrecords.repository.AgreementRepository;
@@ -21,6 +24,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AgreementServiceImpl implements AgreementService {
@@ -53,15 +57,15 @@ public class AgreementServiceImpl implements AgreementService {
                 daysOfOverdue = 30;
             }
 
-            return repository.findAll(patientId, programId, statusToSearch, UserServiceImpl.getTenantIdAuthenticatedUser(), daysOfOverdue , LocalDate.now(), pageRequest);
+            return repository.findAll(patientId, programId, statusToSearch, UserServiceImpl.getTenantIdAuthenticatedUser(), daysOfOverdue, LocalDate.now(), pageRequest);
         }
 
         return repository.findAll(patientId, programId, statusToSearch, UserServiceImpl.getTenantIdAuthenticatedUser(), pageRequest);
     }
 
     @Override
-    public Optional<Agreement> getRecord(final Long id) {
-        return repository.findByIdAndTenantId(id, UserServiceImpl.getTenantIdAuthenticatedUser());
+    public Optional<Agreement> getRecord(final Long agreementId) {
+        return repository.findByIdAndTenantId(agreementId, UserServiceImpl.getTenantIdAuthenticatedUser());
     }
 
     @Override
@@ -77,8 +81,8 @@ public class AgreementServiceImpl implements AgreementService {
     }
 
     @Override
-    public UpdateAgreementBO update(final UpdateAgreementBO agreement, final Long id) {
-        Agreement agreementEnt = getRecord(id).orElseThrow(ResourceNotFoundException::of);
+    public UpdateAgreementBO update(final UpdateAgreementBO agreement, final Long agreementId) {
+        Agreement agreementEnt = getRecord(agreementId).orElseThrow(ResourceNotFoundException::of);
 
         if (StatusAgreement.CANCELED.equals(agreementEnt.getStatus()) && StatusAgreement.COMPLETED.equals(agreement.getStatus())) {
             String msgErro = "Um contrato cancelado não pode ser marcado como concluído.";
@@ -119,6 +123,26 @@ public class AgreementServiceImpl implements AgreementService {
         agreementEnt.setProgram(programService.getRecord(agreement.getProgramId()).orElseThrow(() -> new BadRequestException("Program not found.")));
 
         return AgreementConverter.toUpdateBO(repository.save(agreementEnt));
+    }
+
+    @Override
+    public AgreementProgramMonitoringResponse getProgramMonitoring(Long agreementId) {
+        var responseFromDB = dailyPostingService
+                .getPeriodicReport(null, null, null, null, null, agreementId, null);
+
+        if (responseFromDB.isEmpty()) {
+            return null;
+        }
+
+        PeriodicReport finishedInformations = responseFromDB.getContent().get(0);
+
+        var response = DailyPostingConverter.toAgreementProgramMonitoringResponse(finishedInformations);
+        response.setDailyPosting(dailyPostingService.getDailyWeightInformation(agreementId)
+                .stream()
+                .map(DailyPostingConverter::toDailyPostingProgramMonitoringResponse)
+                .collect(Collectors.toList())
+        );
+        return response;
     }
 
     private boolean canCancelAgreement(Agreement agreement) {

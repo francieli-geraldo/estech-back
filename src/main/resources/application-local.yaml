@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://185.169.97.114:3306/scsoftwa_afinese?createDatabaseIfNotExist=true
-    username: scsoftwa_afine
-    password: bF3SZB1M5r
+    url: jdbc:mysql://localhost:3306/db_estech_prd?createDatabaseIfNotExist=true
+    username: root
+    password: root
     hikari:
       connectionTimeout: 60000
       idleTimeout: 600000

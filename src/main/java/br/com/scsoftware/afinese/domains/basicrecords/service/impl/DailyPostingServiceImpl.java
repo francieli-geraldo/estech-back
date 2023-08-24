@@ -53,6 +53,7 @@ public class DailyPostingServiceImpl implements DailyPostingService {
         final DailyPosting dailyPostingEnt = DailyPostingConverter.fromBO(dailyPosting,
                 repository.findByAgreementIdAndAgreementPatientIdAndDateAndTenantId(agreementId, patientId, dailyPosting.getDate(),
                         tenantId).orElse(new DailyPosting()));
+
         dailyPostingEnt.setAgreement(agreementService.getRecord(agreementId).orElseThrow(ResourceNotFoundException::of));
 
         ArrayList<Long> agreementsId = new ArrayList<>();
@@ -96,7 +97,7 @@ public class DailyPostingServiceImpl implements DailyPostingService {
 
     @Override
     public Page<PeriodicReport> getPeriodicReport(final Long groupId, final String initialDate, final String finalDate,
-                                                  final StatusAgreement status, final Long patientId, final Pageable pageRequest) {
+                                                  final StatusAgreement status, final Long patientId, final Long agreementId, final Pageable pageRequest) {
         LocalDate initialDateLocal = null;
         LocalDate finalDateLocal = null;
         if (StringUtils.hasText(initialDate)) {
@@ -111,7 +112,7 @@ public class DailyPostingServiceImpl implements DailyPostingService {
         Integer daysOfOverdue = getDaysOfOverdueByStatus(status);
 
         return repository.getPeriodicReport(groupId, initialDateLocal, finalDateLocal, statusToSearch == null ? null : statusToSearch.name(), patientId,
-                UserServiceImpl.getTenantIdAuthenticatedUser(), daysOfOverdue, pageRequest);
+                UserServiceImpl.getTenantIdAuthenticatedUser(), daysOfOverdue, agreementId, pageRequest);
     }
 
     @Override
@@ -161,6 +162,11 @@ public class DailyPostingServiceImpl implements DailyPostingService {
     @Override
     public List<DailyWeightInformation> getDailyWeightInformation(final LocalDate date, final ArrayList<Long> agreementsId) {
         return repository.getDailyWeightInformation(agreementsId, date, UserServiceImpl.getTenantIdAuthenticatedUser());
+    }
+
+    @Override
+    public List<DailyWeightInformation> getDailyWeightInformation(Long agreementId) {
+        return repository.getDailyWeightInformation(agreementId, UserServiceImpl.getTenantIdAuthenticatedUser());
     }
 
     private List<DailyWeightInformation> filterDailyWeightInformationByAgreement(final List<DailyWeightInformation> dailyWeightInformationList, final Long agreementId) {

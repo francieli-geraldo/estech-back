@@ -28,6 +28,11 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
     }
 
     @Override
+    public T getById(Long id) {
+        return repository.findById(id).orElseThrow(ResourceNotFoundException::of);
+    }
+
+    @Override
     public boolean delete(Long id) {
         T entBD = getRecord(id).orElseThrow(ResourceNotFoundException::of);
 

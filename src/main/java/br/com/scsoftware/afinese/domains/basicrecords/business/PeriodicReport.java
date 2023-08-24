@@ -17,6 +17,12 @@ public interface PeriodicReport {
 
     Date getStartDate();
 
+    BigDecimal getStartingWeight();
+
+    BigDecimal getCurrentWeight();
+
+    BigDecimal getAccumulatedEvolution();
+
     Date getDateConclusion();
 
     Integer getBreakfastTotal();
