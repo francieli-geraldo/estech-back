@@ -1,0 +1,1 @@
+./gradlew build -Dorg.gradle.java.home=/home/ubuntu/jdk-21
