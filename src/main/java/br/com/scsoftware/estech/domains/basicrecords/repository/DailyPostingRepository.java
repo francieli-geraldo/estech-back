@@ -112,16 +112,13 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "  sum(d.hiit) hiitTotal, " +
             "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
             "  sum(case " +
-            "    when dayofweek(d.release_date) in (2, 6) and d.balance then 1 " +
+            "    when d.balance then 1 " +
             "    else 0 " +
             "  end) balanceTotal, " +
             "  coalesce(sum(case " +
-            "    when dayofweek(d.release_date) in (2, 6) and d.balance then 1 " +
+            "    when d.balance then 1 " +
             "    else 0 " +
-            "  end) / sum(case " +
-            "    when dayofweek(d.release_date) in (2, 6) then 1 " +
-            "    else 0 " +
-            "  end) * 100, 0) balancePercentage, " +
+            "  end) / sum(1) * 100, 0) balancePercentage, " +
             "  sum(d.evolution) evolutionPeriod, " +
             "  a.goal - a.starting_weight goal, " +
             "  count(d.notes) notesTotal " +
@@ -195,12 +192,9 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "  end status, " +
             "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
             "  coalesce(sum(case " +
-            "    when dayofweek(d.release_date) in (2, 6) and d.balance then 1 " +
+            "    when d.balance then 1 " +
             "    else 0 " +
-            "  end) / sum(case " +
-            "    when dayofweek(d.release_date) in (2, 6) then 1 " +
-            "    else 0 " +
-            "  end) * 100, 0) balancePercentage, " +
+            "  end) / sum(1) * 100, 0) balancePercentage, " +
             "  sum(d.evolution) evolutionPeriod, " +
             "  a.goal - a.starting_weight goal," +
             "  sum((d.evolution / (a.goal - a.starting_weight)) * 100) goalPercentage, " +
