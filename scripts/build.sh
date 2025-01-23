@@ -1,1 +1,1 @@
-./gradlew build -Dorg.gradle.java.home=/root/jdk-21
+./gradlew build -Dorg.gradle.java.home=/root/apps/jdk-21
