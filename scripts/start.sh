@@ -1,1 +1,1 @@
-~/jdk-21/bin/java -DDATABASE=db_estech_prd -DDB_SERVER=localhost -DDBPASSWORD='estech$31' -DDBUSERNAME=estech -DENV_PROFILE=prd -DJWT_SECRET=4031cb724d72465bae49455a79167a374031cb724d72465bae49455a79167a37 -DENV_SERVER_PORT=8080 -jar build/libs/estech-1.0.0.jar > /dev/null 2>&1 & disown
+~/apps/jdk-21/bin/java -DDATABASE=db_estech_prd -DDB_SERVER=localhost -DDBPASSWORD='estech$31' -DDBUSERNAME=estech -DENV_PROFILE=prd -DJWT_SECRET=4031cb724d72465bae49455a79167a374031cb724d72465bae49455a79167a37 -DENV_SERVER_PORT=8080 -jar build/libs/estech-1.0.0.jar > /dev/null 2>&1 & disown
