@@ -22,7 +22,7 @@ spring:
     open-in-view: false
 
   flyway:
-    enabled: false
+    enabled: true
     url: jdbc:mysql://${DB_SERVER}:3306/${DATABASE}?createDatabaseIfNotExist=true
     user: ${DBUSERNAME}
     password: ${DBPASSWORD}
