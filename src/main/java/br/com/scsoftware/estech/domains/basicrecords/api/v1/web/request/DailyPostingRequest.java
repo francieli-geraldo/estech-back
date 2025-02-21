@@ -1,5 +1,6 @@
 package br.com.scsoftware.estech.domains.basicrecords.api.v1.web.request;
 
+import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
 
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class DailyPostingRequest {
     private Boolean dinner;
     @NotNull
     private Boolean hiit;
-    @NotNull
-    private Boolean mentorship;
+    @NotNull()
+    private Boolean mentorship = false;
     private String notes;
 }
