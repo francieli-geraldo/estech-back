@@ -28,6 +28,7 @@ public class PeriodicReportResponse {
     private Integer afternoonSnackTotal;
     private Integer dinnerTotal;
     private Integer hiitTotal;
+    private Integer mentorshipTotal;
     @JsonSerialize(using = PercentBigDecimalSerializer.class)
     private BigDecimal postingPercentage;
     private Integer balanceTotal;

@@ -72,6 +72,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "   coalesce(dp.accumulated_evolution, 0) accumulatedEvolution, " +
             "   coalesce(dp.breakfast, 0) breakfast, " +
             "   coalesce(dp.morning_snack, 0) morningSnack, " +
+            "   coalesce(dp.mentorship, 0) mentorship, " +
             "   coalesce(dp.afternoon_snack, 0) afternoonSnack, " +
             "   coalesce(dp.dinner, 0) dinner, " +
             "   coalesce(dp.hiit, 0) hiit, " +
@@ -106,11 +107,13 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "  coalesce(a.cancellation_date, a.date_conclusion) dateConclusion, " +
             "  sum(d.breakfast) breakfastTotal, " +
             "  sum(d.morning_snack) morningSnackTotal, " +
+            "  sum(d.mentorship) mentorship, " +
             "  sum(d.lunch) lunchTotal, " +
             "  sum(d.afternoon_snack) afternoonSnackTotal, " +
             "  sum(d.dinner) dinnerTotal, " +
             "  sum(d.hiit) hiitTotal, " +
-            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
+            "  sum(d.mentorship) mentorshipTotal, " +
+            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit)) + sum(d.mentorship)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
             "  sum(case " +
             "    when d.balance then 1 " +
             "    else 0 " +
@@ -190,7 +193,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "    when a.status = 'ACTIVE' and not :daysOfOverdue is null and DATEDIFF(a.hiring_date, now()) < 30 then 'OVERDUE_LESS_30'" +
             "    else a.status" +
             "  end status, " +
-            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
+            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit) + sum(d.mentorship)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
             "  coalesce(sum(case " +
             "    when d.balance then 1 " +
             "    else 0 " +

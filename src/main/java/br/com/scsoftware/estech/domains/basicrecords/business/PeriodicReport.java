@@ -36,6 +36,7 @@ public interface PeriodicReport {
     Integer getDinnerTotal();
 
     Integer getHiitTotal();
+    Integer getMentorshipTotal();
 
     BigDecimal getPostingPercentage();
 

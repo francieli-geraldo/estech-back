@@ -23,5 +23,6 @@ public class DailyPostingBO {
     private boolean afternoonSnack;
     private boolean dinner;
     private boolean hiit;
+    private boolean mentorship;
     private String notes;
 }

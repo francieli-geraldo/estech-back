@@ -119,6 +119,7 @@ public class DailyPostingConverter {
                 .afternoonSnack(dailyPosting.getAfternoonSnack())
                 .dinner(dailyPosting.getDinner())
                 .hiit(dailyPosting.getHiit())
+                .mentorship(dailyPosting.getMentorship())
                 .notes(dailyPosting.getNotes())
                 .build();
     }
@@ -137,6 +138,7 @@ public class DailyPostingConverter {
                 .afternoonSnack(dailyPosting.getAfternoonSnack())
                 .dinner(dailyPosting.getDinner())
                 .hiit(dailyPosting.getHiit())
+                .mentorship(dailyPosting.getMentorship())
                 .notes(dailyPosting.getNotes())
                 .build();
     }
@@ -156,6 +158,7 @@ public class DailyPostingConverter {
                 .afternoonSnack(dailyPosting.isAfternoonSnack())
                 .dinner(dailyPosting.isDinner())
                 .hiit(dailyPosting.isHiit())
+                .mentorship(dailyPosting.isMentorship())
                 .notes(dailyPosting.getNotes())
                 .build();
     }
@@ -171,6 +174,7 @@ public class DailyPostingConverter {
         dailyPostingEnt.setAfternoonSnack(dailyPosting.isAfternoonSnack());
         dailyPostingEnt.setDinner(dailyPosting.isDinner());
         dailyPostingEnt.setHiit(dailyPosting.isHiit());
+        dailyPostingEnt.setMentorship(dailyPosting.isMentorship());
         dailyPostingEnt.setNotes(dailyPosting.getNotes());
 
         return dailyPostingEnt;
@@ -200,6 +204,7 @@ public class DailyPostingConverter {
                 .afternoonSnackTotal(periodicReport.getAfternoonSnackTotal())
                 .dinnerTotal(periodicReport.getDinnerTotal())
                 .hiitTotal(periodicReport.getHiitTotal())
+                .mentorshipTotal(periodicReport.getMentorshipTotal())
                 .postingPercentage(periodicReport.getPostingPercentage())
                 .balanceTotal(periodicReport.getBalanceTotal())
                 .balancePercentage(periodicReport.getBalancePercentage())

@@ -26,5 +26,7 @@ public class DailyPostingRequest {
     private Boolean dinner;
     @NotNull
     private Boolean hiit;
+    @NotNull
+    private Boolean mentorship;
     private String notes;
 }

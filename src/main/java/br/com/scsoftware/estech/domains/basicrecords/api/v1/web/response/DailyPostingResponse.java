@@ -27,5 +27,6 @@ public class DailyPostingResponse {
     private Boolean afternoonSnack;
     private Boolean dinner;
     private Boolean hiit;
+    private Boolean mentorship;
     private String notes;
 }

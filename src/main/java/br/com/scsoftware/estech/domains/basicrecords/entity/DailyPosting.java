@@ -58,6 +58,9 @@ public class DailyPosting extends BaseEntity {
     @Column(name = "hiit")
     private boolean hiit;
 
+    @Column(name = "mentorship")
+    private boolean mentorship;
+
     @Column(name = "notes")
     private String notes;
 }

@@ -19,6 +19,7 @@ public class PeriodicReportConverter {
                 .afternoonSnackTotal(report.getAfternoonSnackTotal())
                 .dinnerTotal(report.getDinnerTotal())
                 .hiitTotal(report.getHiitTotal())
+                .mentorshipTotal(report.getMentorshipTotal())
                 .postingPercentage(report.getPostingPercentage())
                 .balanceTotal(report.getBalanceTotal())
                 .balancePercentage(report.getBalancePercentage())
