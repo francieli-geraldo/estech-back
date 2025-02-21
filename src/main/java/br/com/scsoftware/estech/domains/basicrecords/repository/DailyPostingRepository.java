@@ -113,7 +113,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "  sum(d.dinner) dinnerTotal, " +
             "  sum(d.hiit) hiitTotal, " +
             "  sum(d.mentorship) mentorshipTotal, " +
-            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit)) + sum(d.mentorship)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
+            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit) + sum(d.mentorship)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
             "  sum(case " +
             "    when d.balance then 1 " +
             "    else 0 " +
