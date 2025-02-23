@@ -113,7 +113,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "  sum(d.dinner) dinnerTotal, " +
             "  sum(d.hiit) hiitTotal, " +
             "  sum(d.mentorship) mentorshipTotal, " +
-            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit) + sum(d.mentorship)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
+            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit) + sum(d.mentorship)) * count(d.id)) / (count(d.id) * 7 * count(d.id))) * 100 postingPercentage, " +
             "  sum(case " +
             "    when d.balance then 1 " +
             "    else 0 " +
@@ -193,7 +193,7 @@ public interface DailyPostingRepository extends BaseRepository<DailyPosting> {
             "    when a.status = 'ACTIVE' and not :daysOfOverdue is null and DATEDIFF(a.hiring_date, now()) < 30 then 'OVERDUE_LESS_30'" +
             "    else a.status" +
             "  end status, " +
-            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit) + sum(d.mentorship)) * count(d.id)) / (count(d.id) * 6 * count(d.id))) * 100 postingPercentage, " +
+            "  (((sum(d.breakfast) + sum(d.morning_snack) + sum(d.lunch) + sum(d.morning_snack) + sum(d.dinner) + sum(d.hiit) + sum(d.mentorship)) * count(d.id)) / (count(d.id) * 7 * count(d.id))) * 100 postingPercentage, " +
             "  coalesce(sum(case " +
             "    when d.balance then 1 " +
             "    else 0 " +
