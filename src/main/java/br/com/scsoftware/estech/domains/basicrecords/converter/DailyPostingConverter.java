@@ -36,6 +36,7 @@ public class DailyPostingConverter {
                 .afternoonSnack(dailyPosting.isAfternoonSnack())
                 .dinner(dailyPosting.isDinner())
                 .hiit(dailyPosting.isHiit())
+                .mentorship(dailyPosting.isMentorship())
                 .notes(dailyPosting.getNotes())
                 .build();
     }
@@ -65,6 +66,7 @@ public class DailyPostingConverter {
                 .afternoonSnack(toBoolean(dailyPosting.get("afternoonSnack")))
                 .dinner(toBoolean(dailyPosting.get("dinner")))
                 .hiit(toBoolean(dailyPosting.get("hiit")))
+                .mentorship(toBoolean(dailyPosting.get("mentorship")))
                 .notes(toString(dailyPosting.get("notes")))
                 .build();
     }
