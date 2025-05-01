@@ -1,6 +1,12 @@
 # Estech Back
 
-Estech is a comprehensive digital platform designed for weight loss and aesthetic clinics. The system centralizes the management of patients, contracts, treatment programs, and clinical performance, empowering healthcare teams with real-time insights and structured workflows.
+Estech Back is the **backend** system for the Estech platform — a digital solution for weight-loss and aesthetic clinics. This backend service is responsible for providing a RESTful API used by the Estech Frontend (currently located at `https://github.com/francieli-geraldo/estech-front`).
+
+It handles core business logic, database interactions, user/contract management, and serves all data visualizations consumed by the frontend dashboard.
+
+> 🔗 **Frontend repository**: https://github.com/francieli-geraldo/estech-front
+
+---
 
 ## 🩺 Product Overview
 
